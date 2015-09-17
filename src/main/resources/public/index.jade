@@ -1,0 +1,49 @@
+!!!5
+
+html(lang='en')
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible' content='IE=edge')
+		meta(name='viewport' content='width=device-width initial-scale=1')
+		
+		title The Cram Site
+		
+		link(rel='shortcut icon' href='/favicon.ico')
+		
+		link(href='/webjars/bootstrap/3.3.5/css/bootstrap.min.css' rel='stylesheet')
+		link(href='/webjars/bootstrap/3.3.5/css/bootstrap-theme.min.css' rel='stylesheet')
+		link(href='/sass/style.css' rel='stylesheet')
+		
+		script(src='/webjars/jquery/1.11.1/jquery.min.js')
+		script(src='/webjars/angularjs/1.4.4/angular.min.js')
+		script(src='/webjars/angularjs/1.4.4/angular-resource.min.js')
+	body
+		.jumbotron
+			.container
+				h1 The Cram Site
+				p for cramming information into your head <em>fast</em>
+				
+		.container-fluid
+			.row
+				ol.breadcrumb
+					li.col-md-offset-1 <a href='#'>Home</a>
+					li <a href='#'>User</a>
+					li.active asdf
+				
+		nav.navbar.navbar-default
+			.container
+				.navbar
+					button.btn.btn-default.navbar-btn(type='button') Create folder
+					button.btn.btn-default.navbar-btn(type='button') Create lesson
+					button.btn.btn-default.navbar-btn(type='button') Sign out
+					
+		.container
+			.row
+				.col-md-2
+					a.thumbnail(href='#')
+						img.img-rounded(src='...' alt='...')
+						.caption
+							h4 Lesson 2
+							p this is a nice lesson this is a nice lesson this is a nice lesson
+							
+		script(src='/webjars/bootstrap/3.3.5/js/bootstrap.min.js')

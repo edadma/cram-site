@@ -1,0 +1,122 @@
+package xyz.hyperreal.cramsite
+
+import com.typesafe.config.ConfigFactory
+import com.github.kxbmap.configs._
+
+import akka.actor.ActorSystem
+
+import spray.routing._
+import spray.http._
+import spray.json._
+import spray.json.DefaultJsonProtocol._
+import spray.httpx.SprayJsonSupport._
+import MediaTypes._
+
+import shapeless._
+
+import in.azeemarshad.common.sessionutils.SessionDirectives
+
+import models._
+
+import concurrent.duration._
+import util.{Success, Failure}
+
+
+object Main extends App with SimpleRoutingApp with SessionDirectives {
+
+	Startup
+	
+	lazy implicit val akka = ActorSystem( "on-spray-can" )
+	implicit val context = akka.dispatcher
+
+  val conf = ConfigFactory.load
+
+  startServer( "localhost", 8080 ) {
+	
+// 		def blog: Directive[dao.Blog :: HNil] = hostName hflatMap {
+// 			case h :: HNil =>
+// 				await( dao.Blogs.find(h) ) match {
+// 					case None => reject
+// 					case Some( b ) => provide( b )
+// 				}
+// 		}
+		
+		def user: Directive[Option[models.User] :: HNil] = optionalSession hflatMap {
+			case None :: HNil => provide( None )
+			case Some( s ) :: HNil => provide( Queries.findUser(s.data("id").toInt) )
+		}
+		
+// 		def admin: Directive[dao.Blog :: models.User :: HNil] = (blog & session) hflatMap {
+// 			case b :: s :: HNil =>
+// 				Queries.findUser( s.data("id").toInt ) match {
+// 					case Some( u ) if u.roles.exists(r => r.blogid == b.id.get && r.role == "admin") => hprovide( b :: u :: HNil )
+// 					case _ => reject( AuthorizationFailedRejection )
+// 				}
+// 		}
+		
+		//
+		// robots.txt request logging
+		//
+		(get & pathPrefixTest( "robots.txt" ) & clientIP & unmatchedPath & user) { (ip, path, user) =>
+			Application.logVisit( ip, path toString, None, user )
+			reject } ~
+		//
+		// resource renaming routes (these will mostly be removed as soon as possible)
+		//
+		pathPrefix("sass") {
+			getFromResourceDirectory("resources/public") } ~
+		(pathPrefix("js") | pathPrefix("css")) {
+			getFromResourceDirectory("public") } ~
+		pathSuffixTest( """.*(?:\.(?:html|png|ico|txt))"""r ) { _ =>
+			getFromResourceDirectory( "public" ) } ~
+		pathPrefix("coffee") {
+			getFromResourceDirectory("public/js") } ~
+		pathPrefix("webjars") {
+			getFromResourceDirectory("META-INF/resources/webjars") } ~
+		//
+		// application request logging (ignores admin and api requests)
+		//
+		(get & pathPrefixTest( !("api"|"setup-admin"|"admin") ) & clientIP & unmatchedPath & optionalHeaderValueByName( "Referer" ) & user) { (ip, path, referrer, user) =>
+			Application.logVisit( ip, path toString, referrer, user )
+			reject } ~
+		//
+		// application routes
+		//
+		//hostName {h => complete(h)} ~
+		(get & pathSingleSlash & user) {
+			u => complete( Application.index(u) ) } ~
+// 		path( "login" ) {
+// 			(get & user) { u =>
+// 				if (u != None)
+// 					redirect( "/", StatusCodes.SeeOther )
+// 				else
+// 					complete( Application.login ) } ~
+// 			(post & formFields( 'email, 'password, 'rememberme ? "no" )) {
+// 				(email, password, rememberme) => Application.authenticate( email, password ) } } ~
+// 		(get & path( "register" ) & blog) {
+// 			_ => complete( Application.register ) } ~
+// 		(get & path( "admin" ) & admin) {
+// 			(b, _) => complete( Views.admin(b) ) } ~
+// 		(post & path( "post" ) & admin & formFields( 'category.as[Int], 'headline, 'text )) {
+// 			(b, u, category, headline, text) => complete( Application.post(b, u, category, headline, text) ) } ~
+		(get & path( "logout" ) & session) {
+			_ => clearSession & redirect( "/", StatusCodes.SeeOther ) }
+		//
+		// API routes
+		//
+//		pathPrefix( "api"/"v1" ) {
+// 			(get & path( "visits"/"count" ) & admin) {
+// 				(b, _) => complete( API.visitsCount(b) ) } ~
+// 			(get & path( "visits" ) & admin) {
+// 				(b, _) => complete( API.visits(b) ) } ~
+// 			(get & path("users"/IntNumber)) {
+// 				userid => complete( API.usersGet(userid) ) } ~
+// 			(post & path("users") & entity(as[UserJson])) {
+// 				u => complete( API.usersPost(u) ) } ~
+// 			(get & path("users"/Segment)) {
+// 				email => complete( API.users(email) ) } ~
+// 			(get & path("users")) {
+// 				complete( API.users ) } ~
+//		}
+	}
+}

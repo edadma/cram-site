@@ -1,0 +1,1 @@
+rsync -azP -e ssh --delete /home/ed/web-projects/cram-site/target/scala-2.11/cram-site-*.jar ed@hyperreal.xyz:/home/ed

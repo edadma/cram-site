@@ -1,0 +1,20 @@
+<div ng-switch on="message.type">
+	<div class="alert alert-danger" ng-switch-when="error">
+		<span class="glyphicon glyphicon-exclamation-sign"></span> {{message.text}}
+	</div>
+
+	<div class="alert alert-warning" ng-switch-when="warning">
+		<span class="glyphicon glyphicon-warning-sign"></span> {{message.text}}
+	</div>
+
+	<div class="alert alert-success" ng-switch-when="success">
+		<span class="glyphicon glyphicon-ok"></span> {{message.text}}
+	</div>
+
+	<div class="alert alert-info" ng-switch-when="info">
+		{{message.text}}
+	</div>
+
+	<div ng-switch-when="none">
+	</div>
+</div>
