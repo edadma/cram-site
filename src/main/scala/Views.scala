@@ -87,8 +87,8 @@ object Views {
 				</nav>
 				
 				<div class="container">
-					<div class="row">
-						<div class="col-md-2" ng-repeat="file in files">
+					<div class="row" ng-repeat="chunk in files">
+						<div class="col-md-2" ng-repeat="file in chunk">
 							<a class="thumbnail" href="#">
 								<img class="img-rounded" src="..." alt="..."/>
 								<div class="caption">

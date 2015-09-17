@@ -36,6 +36,11 @@ object Startup {
 			root =>
 				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, true, None )
 				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true, None )
+				
+				Files.create( s"Folder 0", "adsf dfsalj kfsal jkdfjklfdsajlk gdf kfsal jkdfjklfdsajlk gdf", Instant.now, Some(root), true, true, None )
+				Files.create( s"Folder 1", "adsf", Instant.now, Some(root), true, true, None )
+				Files.create( s"Folder 2", "adsf", Instant.now, Some(root), true, true, None )
+				Files.create( s"Folder 3", "adsf", Instant.now, Some(root), true, true, None )
 		}
 	}
 	
