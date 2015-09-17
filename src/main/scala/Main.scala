@@ -104,7 +104,9 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		//
 		// API routes
 		//
-//		pathPrefix( "api"/"v1" ) {
+		pathPrefix( "api"/"v1" ) {
+			(get & path("files")) {
+				complete( API.filesUnderRoot ) }
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {
@@ -117,6 +119,6 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 // 				email => complete( API.users(email) ) } ~
 // 			(get & path("users")) {
 // 				complete( API.users ) } ~
-//		}
+		}
 	}
 }

@@ -58,9 +58,11 @@ object API extends SessionDirectives {
 	
 	//def users = Users.list map (u => u map (models.User.from(_)))
 	
-	def root = Files.findUnder( rootid )
+	def filesUnderRoot = {
+		Files.findUnder( rootid )
+	}
 	
-	def files( parentid: Int ) = Files.findUnder( parentid )
+	def filesUnder( parentid: Int ) = Files.findUnder( parentid )
 	
 // 	def comments( postid: Int, authorid: Option[Int], name: Option[String], email: Option[String], url: String, replyto: Option[Int], content: String ) =
 // 		Comments.create( postid, authorid, name, email, if (url == "") None else Some(url), Instant.now, replyto, content ) map (id => Map( "id" -> id ))

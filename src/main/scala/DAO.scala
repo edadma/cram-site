@@ -11,6 +11,8 @@ import spray.json.DefaultJsonProtocol._
 import concurrent._
 import concurrent.ExecutionContext.Implicits.global
 
+import xyz.hyperreal.cramsite._
+
 
 case class User(
 	name: String,
@@ -131,6 +133,10 @@ case class File(
 	id: Option[Int] = None
 )
 
+object File {
+	implicit val file = jsonFormat7(File.apply)
+}
+
 class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 	def name = column[String]("name")
@@ -140,7 +146,7 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 	def visible = column[Boolean]("visible")
 	def directory = column[Boolean]("directory")
 	
-	def * = (name, description, created, parentid, visible, directory, id.?) <> (File.tupled, File.unapply)
+	def * = (name, description, created, parentid, visible, directory, id.?) <> (File.apply _ tupled, File.unapply)
 	def parent_fk = foreignKey("files_parent_fk", parentid, Files)(_.id.?, onDelete=ForeignKeyAction.Cascade)
 	def idx_files_name = index("idx_files_name", name)
 	def idx_files_name_parent = index("idx_files_name_parent", (name, parentid), unique = true )
@@ -149,11 +155,11 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 object Files extends TableQuery(new FilesTable(_)) {
 	def find(id: Int): Future[Option[File]] = db.run( filter(_.id === id) result ) map (_.headOption)
 
-	def findUnder(parentid: Int) = db.run( filter (f => f.visible && f.parentid.get === parentid) sortBy (_.name.asc) result )
+	def findUnder(parentid: Int) = db.run( filter (f => f.parentid.isDefined && f.visible && f.parentid === parentid) sortBy (_.name.asc) result )
 
-	def find(parentid: Int, name: String) = db.run( filter (f => f.name === name && f.parentid.get === parentid) result ) map (_.headOption)
+	def find(parentid: Int, name: String) = db.run( filter (f => f.parentid.isDefined && f.name === name && f.parentid === parentid) result ) map (_.headOption)
 
-	def findRoot = dbrun( filter (_.name === "/") result )
+	def findRoot = dbrun( filter (_.parentid.isEmpty) result )
 
 	def create(
 		name: String,
@@ -212,9 +218,7 @@ case class Visit(
 )
 
 object Visit {
-	import xyz.hyperreal.cramsite._
-	
-	implicit val blog = jsonFormat7(Visit.apply)
+	implicit val visit = jsonFormat7(Visit.apply)
 }
 
 class VisitsTable(tag: Tag) extends Table[Visit](tag, "visits") {
