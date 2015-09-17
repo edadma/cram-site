@@ -32,10 +32,10 @@ object Startup {
 				Users.create( u("name"), u("email"), u("password"), None ) map (userid => Roles.create(userid, "admin"))
 		}
 		
-		Files.create( "/", "", Instant.now, None, true, true ) map {
+		Files.create( "/", "", Instant.now, None, true, true, None ) map {
 			root =>
-				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, true )
-				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true )
+				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, true, None )
+				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true, None )
 		}
 	}
 	

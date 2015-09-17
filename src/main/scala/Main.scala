@@ -100,7 +100,7 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 // 		(post & path( "post" ) & admin & formFields( 'category.as[Int], 'headline, 'text )) {
 // 			(b, u, category, headline, text) => complete( Application.post(b, u, category, headline, text) ) } ~
 		(get & path( "logout" ) & session) {
-			_ => clearSession & redirect( "/", StatusCodes.SeeOther ) }
+			_ => clearSession & redirect( "/", StatusCodes.SeeOther ) } ~
 		//
 		// API routes
 		//

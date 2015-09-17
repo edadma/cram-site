@@ -72,20 +72,35 @@ object Views {
 					<div class="container">
 						<div class="navbar">
 							<button class="btn btn-default navbar-btn" type="button">Create folder</button>
+							<button class="btn navbar-btn navbar-right" type="button">Sign up</button>
+							<form class="navbar-form navbar-right">
+								<div class="form-group">
+									<input type="text" placeholder="Email" class="form-control" autofocus=""/>
+								</div>
+								<div class="form-group">
+									<input type="password" placeholder="Password" class="form-control"/>
+								</div>
+								<button type="submit" class="btn btn-success">Sign in</button>
+							</form>
 						</div>
 					</div>
 				</nav>
 				
 				<div class="container">
 					<div class="row">
-						<div class="col-md-2">
+						<div class="col-md-2" ng-repeat="file in files">
 							<a class="thumbnail" href="#">
 								<img class="img-rounded" src="..." alt="..."/>
 								<div class="caption">
-									<h4>Lesson 2</h4>
-									<p>this is a nice lesson</p>
+									<h4>{"{{file.name}}"}</h4>
+									<p>{"{{file.description}}"}</p>
 								</div>
 							</a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3">
+							<ng-include src="'/message.html'"></ng-include>
 						</div>
 					</div>
 				</div>

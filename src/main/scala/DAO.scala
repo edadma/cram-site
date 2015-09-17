@@ -130,11 +130,12 @@ case class File(
 	parentid: Option[Int],
 	visible: Boolean,
 	directory: Boolean,
+	imageid: Option[Int],
 	id: Option[Int] = None
 )
 
 object File {
-	implicit val file = jsonFormat7(File.apply)
+	implicit val file = jsonFormat8(File.apply)
 }
 
 class FilesTable(tag: Tag) extends Table[File](tag, "files") {
@@ -145,8 +146,9 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 	def parentid = column[Option[Int]]("parentid")
 	def visible = column[Boolean]("visible")
 	def directory = column[Boolean]("directory")
+	def imageid = column[Option[Int]]("imageid")
 	
-	def * = (name, description, created, parentid, visible, directory, id.?) <> (File.apply _ tupled, File.unapply)
+	def * = (name, description, created, parentid, visible, directory, imageid, id.?) <> (File.apply _ tupled, File.unapply)
 	def parent_fk = foreignKey("files_parent_fk", parentid, Files)(_.id.?, onDelete=ForeignKeyAction.Cascade)
 	def idx_files_name = index("idx_files_name", name)
 	def idx_files_name_parent = index("idx_files_name_parent", (name, parentid), unique = true )
@@ -155,7 +157,7 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 object Files extends TableQuery(new FilesTable(_)) {
 	def find(id: Int): Future[Option[File]] = db.run( filter(_.id === id) result ) map (_.headOption)
 
-	def findUnder(parentid: Int) = db.run( filter (f => f.parentid.isDefined && f.visible && f.parentid === parentid) sortBy (_.name.asc) result )
+	def findUnder(parentid: Int) = db.run( filter (f => f.visible && f.parentid === parentid) sortBy (_.name.asc) result )
 
 	def find(parentid: Int, name: String) = db.run( filter (f => f.parentid.isDefined && f.name === name && f.parentid === parentid) result ) map (_.headOption)
 
@@ -167,8 +169,9 @@ object Files extends TableQuery(new FilesTable(_)) {
 		created: Instant,
 		parentid: Option[Int],
 		visible: Boolean,
-		directory: Boolean
-		) = db.run( this returning map(_.id) += File(name, description, created, parentid, visible, directory) )
+		directory: Boolean,
+		imageid: Option[Int]
+		) = db.run( this returning map(_.id) += File(name, description, created, parentid, visible, directory, imageid) )
 
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
