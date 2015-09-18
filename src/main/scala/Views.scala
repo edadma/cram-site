@@ -58,13 +58,13 @@ object Views {
 					</div>
 				</div>
 				
-				<ol class="breadcrumb">
-					<div class="container breadcrumb">
+				<div class="breadcrumb">
+					<ol class="container breadcrumb">
 						<li><a href='#'>Home</a></li>
-						<li ng-repeat="e in path"><a href='#'>{"{{e}}"}</a></li>
-						<li class="active"></li>
-					</div>
-				</ol>
+						<li ng-repeat="e in path"><a href='#'>{xml.Unparsed("{{e.name}}&nbsp;")}</a></li>
+						<li class="active">{"{{file}}"}</li>
+					</ol>
+				</div>
 				
 				<nav class="navbar navbar-default">
 					<div class="container">
@@ -83,7 +83,7 @@ object Views {
 				</nav>
 				
 				<div class="container">
-					<div class="row" ng-repeat="chunk in files">
+					<div class="row" ng-repeat="chunk in chunks">
 						<div class="col-md-2" ng-repeat="file in chunk">
 							<a class="thumbnail" href="#">
 								<img class="img-rounded" src="..." alt="..."/>
