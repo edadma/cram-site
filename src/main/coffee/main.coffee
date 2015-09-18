@@ -2,14 +2,15 @@ app = angular.module 'cramsite', ['ngResource']
 
 app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Files = $resource '/api/v1/files/:id'
-	
+	Lessons = $resource '/api/v1/lessons/:id'
+	ChunkSize = 6
 	$scope.message = {type: 'none'}
 
 	home = ->
 		$scope.path = []
 		$scope.file = undefined
 		Files.query (result, response) ->
-			$scope.chunks = (result.slice(i, i + 6) for i in [0..result.length - 1] by 6)
+			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 
@@ -20,7 +21,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			$scope.path.push file
 			directory(file)
 		else
-			$scope.file = file
+			open(file)
 			
 	$scope.selectHome = ->
 		home()
@@ -36,4 +37,12 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		
+	open = (file) ->
+		$scope.file = file
+		Lessons.get {id: file.id}, (result, response) ->
+			$scope.pairs = result.pairs
+		,	(response) ->
+			$scope.message = {type: 'error', text: response.data}
+		
+	
 	] )

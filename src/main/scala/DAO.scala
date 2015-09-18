@@ -97,6 +97,10 @@ case class Pair(
 	id: Option[Int] = None
 )
 
+object Pair {
+	implicit val pair = jsonFormat4(Pair.apply)
+}
+
 class PairsTable(tag: Tag) extends Table[Pair](tag, "pairs") {
 	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 	def fileid = column[Int]("fileid")

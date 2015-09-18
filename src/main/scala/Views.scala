@@ -83,19 +83,44 @@ object Views {
 				</nav>
 				
 				<div class="container">
-					<div class="row" ng-repeat="chunk in chunks">
-						<div class="col-md-2" ng-repeat="file in chunk">
-							<a class="thumbnail" ng-click="selectFile(file)">
-								<img class="img-rounded" src="..." alt="..."/>
-								<div class="caption">
-									<h4>{"{{file.name}}"}</h4>
-									<p>{"{{file.description}}"}</p>
-								</div>
-							</a>
+					
+					<div class="row">
+						<div class="col-md-8">
+							<div ng-show="file">
+								<div class="panel panel-default">
+									<div class="panel-heading">{"{{file.name}}"}</div>
+									<div class="panel-body"><p>{"{{file.description}}"}</p></div>
+									<table class="table">
+										<tr>
+											<th>Front</th>
+											<th>Back</th>
+										</tr>
+										<tr ng-repeat="pair in pairs">
+											<td>{"{{pair.left}}"}</td>
+											<td>{"{{pair.right}}"}</td>
+										</tr>
+									</table>
+								</div>						
+							</div>
 						</div>
 					</div>
+					
+					<div ng-hide="file">
+						<div class="row" ng-repeat="chunk in chunks">
+							<div class="col-md-2" ng-repeat="file in chunk">
+								<a class="thumbnail" ng-click="selectFile(file)">
+									<img class="img-rounded" src="..." alt="..."/>
+									<div class="caption">
+										<h4>{"{{file.name}}"}</h4>
+										<p>{"{{file.description}}"}</p>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+						
 					<div class="row">
-						<div class="col-md-3">
+						<div class="col-md-5">
 							<ng-include src="'/message.html'"></ng-include>
 						</div>
 					</div>

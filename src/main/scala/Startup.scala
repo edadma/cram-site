@@ -21,6 +21,7 @@ object Startup {
 				Users.schema ++
 				Roles.schema ++
 				Files.schema ++
+				Pairs.schema ++
 				Visits.schema
 			).create
 		)))
@@ -37,7 +38,14 @@ object Startup {
 				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, true, None )
 				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true, None ) map {
 					users =>
-						Files.create( "Bob", "Bob's folder", Instant.now, Some(users), true, true, None )
+						Files.create( "Bob", "Bob's folder", Instant.now, Some(users), true, true, None ) map {
+							bob =>
+								Files.create( "French 101", "French vocabulary", Instant.now, Some(bob), true, false, None ) map {
+									french101 =>
+										Pairs.create( french101, "one", "un/e" )
+										Pairs.create( french101, "two", "deux" )
+								}
+						}
 				}
 		}
 	}
