@@ -53,7 +53,7 @@ object Views {
 			<div ng-app="cramsite" ng-controller="MainController" ng-cloak="">
 				<div class="jumbotron">
 					<div class="container">
-						<h1>The Cram Site</h1>
+						<h1><button class="btn pull-right">Sign up</button><span class="pull-right">&nbsp;</span><button class="btn btn-primary pull-right">Sign in</button></h1><h1>The Cram Site</h1>
 						<p>for cramming information into your head <em>fast</em></p>
 					</div>
 				</div>
@@ -68,25 +68,15 @@ object Views {
 				
 				<nav class="navbar navbar-default">
 					<div class="container">
-						<!-- <button class="btn btn-default navbar-btn" type="button">Create folder</button> -->
-						<button class="btn navbar-btn navbar-right" type="button">Sign up</button>
-						<form class="navbar-form navbar-right">
-							<div class="form-group">
-								<input type="text" placeholder="Email" class="form-control" autofocus=""/>
-							</div>
-							<div class="form-group">
-								<input type="password" placeholder="Password" class="form-control"/>
-							</div>
-							<button type="submit" class="btn btn-success">Sign in</button>
-						</form>
+						<button ng-show="file" class="btn btn-success navbar-btn" type="button">Start Cramming!</button>
 					</div>
 				</nav>
 				
-				<div class="container">
+				<div class="main container">
 					
-					<div class="row">
-						<div class="col-md-8">
-							<div ng-show="file">
+					<div ng-show="file">
+						<div class="row">
+							<div class="col-md-8">
 								<div class="panel panel-default">
 									<div class="panel-heading">{"{{file.name}}"}</div>
 									<div class="panel-body"><p>{"{{file.description}}"}</p></div>
@@ -124,6 +114,7 @@ object Views {
 							<ng-include src="'/message.html'"></ng-include>
 						</div>
 					</div>
+					
 				</div>
 
 			</div>
