@@ -58,31 +58,27 @@ object Views {
 					</div>
 				</div>
 				
-				<div class="container-fluid">
-					<div class="row">
-						<ol class="breadcrumb">
-							<li class="col-md-offset-1"><a href='#'>Home</a></li>
-							<li ng-repeat="e in path"><a href='#'>{"{{e}}"}</a></li>
-							<li class="active"></li>
-						</ol>
+				<ol class="breadcrumb">
+					<div class="container breadcrumb">
+						<li><a href='#'>Home</a></li>
+						<li ng-repeat="e in path"><a href='#'>{"{{e}}"}</a></li>
+						<li class="active"></li>
 					</div>
-				</div>
+				</ol>
 				
 				<nav class="navbar navbar-default">
 					<div class="container">
-						<div class="navbar">
-							<button class="btn btn-default navbar-btn" type="button">Create folder</button>
-							<button class="btn navbar-btn navbar-right" type="button">Sign up</button>
-							<form class="navbar-form navbar-right">
-								<div class="form-group">
-									<input type="text" placeholder="Email" class="form-control" autofocus=""/>
-								</div>
-								<div class="form-group">
-									<input type="password" placeholder="Password" class="form-control"/>
-								</div>
-								<button type="submit" class="btn btn-success">Sign in</button>
-							</form>
-						</div>
+						<button class="btn btn-default navbar-btn" type="button">Create folder</button>
+						<button class="btn navbar-btn navbar-right" type="button">Sign up</button>
+						<form class="navbar-form navbar-right">
+							<div class="form-group">
+								<input type="text" placeholder="Email" class="form-control" autofocus=""/>
+							</div>
+							<div class="form-group">
+								<input type="password" placeholder="Password" class="form-control"/>
+							</div>
+							<button type="submit" class="btn btn-success">Sign in</button>
+						</form>
 					</div>
 				</nav>
 				

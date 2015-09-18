@@ -43,8 +43,8 @@ libraryDependencies ++= Seq(
 	)
 
 libraryDependencies ++= Seq(
-	"com.typesafe.slick" %% "slick" % "3.0.3",
-	"com.typesafe.slick" %% "slick-codegen" % "3.0.3",
+	"com.typesafe.slick" %% "slick" % "3.0.2",
+	"com.typesafe.slick" %% "slick-codegen" % "3.0.2",
 	"com.h2database" % "h2" % "1.4.188",
 	"joda-time" % "joda-time" % "2.7",
 	"org.joda" % "joda-convert" % "1.7",
