@@ -30,6 +30,10 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		$scope.path.splice( index + 1, $scope.path.length - index - 1 )
 		directory($scope.path[index])
 		
+	$scope.isUnderTopics = -> $scope.path.length > 0 && $scope.path[0].name == 'Topics'
+	
+	$scope.isUnderATopic = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
+	
 	directory = (dir) ->
 		$scope.file = undefined
 		Files.query {id: dir.id}, (result, response) ->

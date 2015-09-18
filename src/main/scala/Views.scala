@@ -53,7 +53,7 @@ object Views {
 			<div ng-app="cramsite" ng-controller="MainController" ng-cloak="">
 				<div class="jumbotron">
 					<div class="container">
-						<h1><button class="btn pull-right">Sign up</button><span class="pull-right">&nbsp;</span><button class="btn btn-primary pull-right">Sign in</button></h1><h1>The Cram Site</h1>
+						<h1><button class="btn pull-right">Sign up</button><button class="btn btn-primary pull-right thin-right">Sign in</button></h1><h1>The Cram Site</h1>
 						<p>for cramming information into your head <em>fast</em></p>
 					</div>
 				</div>
@@ -68,7 +68,11 @@ object Views {
 				
 				<nav class="navbar navbar-default">
 					<div class="container">
-						<button ng-show="file" class="btn btn-success navbar-btn" type="button">Start Cramming!</button>
+						<button ng-show="file" class="btn btn-success navbar-btn">Start Cramming!</button>
+						<button ng-show="file" class="btn btn-default navbar-btn">Rename Lesson</button>
+						<button ng-show="file" class="btn btn-default navbar-btn">Edit</button>
+						<button ng-show="isUnderTopics()" class="btn btn-default navbar-btn">Create Folder</button>
+						<button ng-show="isUnderATopic()" class="btn btn-default navbar-btn">Rename Folder</button>
 					</div>
 				</nav>
 				
