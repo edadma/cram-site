@@ -106,7 +106,9 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		//
 		pathPrefix( "api"/"v1" ) {
 			(get & path("files")) {
-				complete( API.filesUnderRoot ) }
+				complete( API.filesUnderRoot ) } ~
+			(get & path("files"/IntNumber)) { id =>
+				complete( API.filesUnder(id) ) }
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {

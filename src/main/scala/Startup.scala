@@ -35,7 +35,10 @@ object Startup {
 		Files.create( "/", "", Instant.now, None, true, true, None ) map {
 			root =>
 				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, true, None )
-				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true, None )
+				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true, None ) map {
+					users =>
+						Files.create( "Bob", "Bob's folder", Instant.now, Some(users), true, true, None )
+				}
 		}
 	}
 	
