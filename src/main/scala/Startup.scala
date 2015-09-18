@@ -33,17 +33,17 @@ object Startup {
 				Users.create( u("name"), u("email"), u("password"), None ) map (userid => Roles.create(userid, "admin"))
 		}
 		
-		Files.create( "/", "", Instant.now, None, true, true, None ) map {
+		Files.create( "/", "", Instant.now, None, false, None, None ) map {
 			root =>
-				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, true, None ) map {
+				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, None, None ) map {
 					topics =>
-						Files.create( "Topic 1", "A topic", Instant.now, Some(topics), true, true, None )
+						Files.create( "Topic 1", "A topic", Instant.now, Some(topics), true, None, None )
 				}
-				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, true, None ) map {
+				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, None, None ) map {
 					users =>
-						Files.create( "Bob", "Bob's folder", Instant.now, Some(users), true, true, None ) map {
+						Files.create( "Bob", "Bob's folder", Instant.now, Some(users), true, None, None ) map {
 							bob =>
-								Files.create( "French 101", "French vocabulary", Instant.now, Some(bob), true, false, None ) map {
+								Files.create( "French 101", "French vocabulary", Instant.now, Some(bob), true, Some("{direction:bi}"), None ) map {
 									french101 =>
 										Pairs.create( french101, "one", "un(e)" )
 										Pairs.create( french101, "two", "deux" )

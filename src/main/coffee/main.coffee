@@ -17,11 +17,11 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	home()
 	
 	$scope.selectFile = (file) ->
-		if file.directory
+		if file.contents
+			open(file)
+		else
 			$scope.path.push file
 			directory(file)
-		else
-			open(file)
 			
 	$scope.selectHome = ->
 		home()
@@ -34,17 +34,33 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	
 	$scope.isUnderATopic = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
 	
+	$scope.startCramming = ->
+		$scope.start = true
+		challenge()
+	
+	$scope.respond = ->
+		console.log "asdf"
+		challenge()
+	
+	challenge = ->
+		challengeIndex = randomInt(0, $scope.lesson.pairs.length)
+		$scope.challenge = $scope.lesson.pairs[challengeIndex].front
+		
+	randomInt = (min, max) -> Math.floor(Math.random() * (max - min)) + min
+		
 	directory = (dir) ->
 		$scope.file = undefined
 		Files.query {id: dir.id}, (result, response) ->
-			$scope.chunks = (result.slice(i, i + 6) for i in [0..result.length - 1] by 6)
+			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		
 	open = (file) ->
+		$scope.start = false
+		challengeIndex = undefined
 		$scope.file = file
 		Lessons.get {id: file.id}, (result, response) ->
-			$scope.pairs = result.pairs
+			$scope.lesson = result
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		

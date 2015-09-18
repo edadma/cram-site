@@ -68,9 +68,11 @@ object Views {
 				
 				<nav class="navbar navbar-default">
 					<div class="container">
-						<button ng-show="file" class="btn btn-success navbar-btn">Start Cramming!</button>
-						<button ng-show="file" class="btn btn-default navbar-btn">Rename Lesson</button>
-						<button ng-show="file" class="btn btn-default navbar-btn">Edit</button>
+						<button ng-show={"file && !start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Start Cramming!</button>
+						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Rename Lesson</button>
+						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
+						<button ng-show={"file && start"} class="btn btn-warning navbar-btn">Pause Cramming</button>
+						<button ng-show={"file && start"} class="btn btn-danger navbar-btn">Restart Cram Session</button>
 						<button ng-show="isUnderTopics()" class="btn btn-default navbar-btn">Create Folder</button>
 						<button ng-show="isUnderATopic()" class="btn btn-default navbar-btn">Rename Folder</button>
 					</div>
@@ -81,19 +83,25 @@ object Views {
 					<div ng-show="file">
 						<div class="row">
 							<div class="col-md-8">
-								<div class="panel panel-default">
-									<div class="panel-heading">{"{{file.name}}"}</div>
-									<div class="panel-body"><p>{"{{file.description}}"}</p></div>
-									<table class="table">
-										<tr>
-											<th>Front</th>
-											<th>Back</th>
-										</tr>
-										<tr ng-repeat="pair in pairs">
-											<td>{"{{pair.left}}"}</td>
-											<td>{"{{pair.right}}"}</td>
-										</tr>
-									</table>
+								<div ng-show="start">
+									<p>{"{{challenge}}"}</p>
+									<form ng-submit="respond()"><input type="text" ng-model="response" placeholder="Response" autofocus=""/></form>
+								</div>
+								<div ng-hide="start">
+									<div class="panel panel-default">
+										<div class="panel-heading">{"{{file.name}}"}</div>
+										<div class="panel-body"><p>{"{{file.description}}"}</p></div>
+										<table class="table">
+											<tr>
+												<th>Front</th>
+												<th>Back</th>
+											</tr>
+											<tr ng-repeat="pair in lesson.pairs">
+												<td>{"{{pair.front}}"}</td>
+												<td>{"{{pair.back}}"}</td>
+											</tr>
+										</table>
+									</div>						
 								</div>						
 							</div>
 						</div>
@@ -133,9 +141,9 @@ object Views {
 				<form class="form-signin" action="/login" method="POST">
 					<h2 class="form-signin-heading">Please sign in</h2>
 					<label for="inputEmail" class="sr-only">Email address</label>
-					<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required="true" autofocus="true"/>
+					<input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus=""/>
 					<label for="inputPassword" class="sr-only">Password</label>
-					<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required="true"/>
+					<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required=""/>
 					<!-- <div class="checkbox">
 						<label>
 							<input type="checkbox" name="rememberme" value="yes"/> Remember me

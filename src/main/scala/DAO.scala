@@ -92,8 +92,8 @@ object Roles extends TableQuery(new RolesTable(_)) {
 
 case class Pair(
 	fileid: Int,
-	left: String,
-	right: String,
+	front: String,
+	back: String,
 	id: Option[Int] = None
 )
 
@@ -104,10 +104,10 @@ object Pair {
 class PairsTable(tag: Tag) extends Table[Pair](tag, "pairs") {
 	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 	def fileid = column[Int]("fileid")
-	def left = column[String]("left")
-	def right = column[String]("right")
+	def front = column[String]("front")
+	def back = column[String]("back")
 	
-	def * = (fileid, left, right, id.?) <> (Pair.apply _ tupled, Pair.unapply)
+	def * = (fileid, front, back, id.?) <> (Pair.apply _ tupled, Pair.unapply)
 	def file_fk = foreignKey("pairs_file_fk", fileid, Files)(_.id, onDelete=ForeignKeyAction.Cascade)
 }
 
@@ -116,9 +116,9 @@ object Pairs extends TableQuery(new PairsTable(_)) {
 
 	def create(
 		fileid: Int,
-		left: String,
-		right: String
-		) = db.run( this += Pair(fileid, left, right) )
+		front: String,
+		back: String
+		) = db.run( this += Pair(fileid, front, back) )
 
 	def delete(fileid: Int): Future[Int] = {
 		db.run(filter(_.fileid === fileid).delete)
@@ -133,7 +133,7 @@ case class File(
 	created: Instant,
 	parentid: Option[Int],
 	visible: Boolean,
-	directory: Boolean,
+	contents: Option[String],
 	imageid: Option[Int],
 	id: Option[Int] = None
 )
@@ -149,10 +149,10 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 	def created = column[Instant]("date")
 	def parentid = column[Option[Int]]("parentid")
 	def visible = column[Boolean]("visible")
-	def directory = column[Boolean]("directory")
+	def contents = column[Option[String]]("contents")
 	def imageid = column[Option[Int]]("imageid")
 	
-	def * = (name, description, created, parentid, visible, directory, imageid, id.?) <> (File.apply _ tupled, File.unapply)
+	def * = (name, description, created, parentid, visible, contents, imageid, id.?) <> (File.apply _ tupled, File.unapply)
 	def parent_fk = foreignKey("files_parent_fk", parentid, Files)(_.id.?, onDelete=ForeignKeyAction.Cascade)
 	def idx_files_name = index("idx_files_name", name)
 	def idx_files_name_parent = index("idx_files_name_parent", (name, parentid), unique = true )
@@ -173,9 +173,9 @@ object Files extends TableQuery(new FilesTable(_)) {
 		created: Instant,
 		parentid: Option[Int],
 		visible: Boolean,
-		directory: Boolean,
+		contents: Option[String],
 		imageid: Option[Int]
-		) = db.run( this returning map(_.id) += File(name, description, created, parentid, visible, directory, imageid) )
+		) = db.run( this returning map(_.id) += File(name, description, created, parentid, visible, contents, imageid) )
 
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
