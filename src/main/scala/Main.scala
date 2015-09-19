@@ -44,12 +44,19 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 			case Some( s ) :: HNil => provide( await(dao.Users.find(s.data("id").toInt)) )
 		}
 		
+		def guest: Directive[dao.User :: HNil] = {
+			val u = await( dao.Users.create(None, None, None, None, GUEST) )
+			
+			setSession( "id" -> u.id.get.toString ) & provide( u )
+		}
+		
 		def user: Directive[dao.User :: HNil] = optionalSession hflatMap {
-			case None :: HNil =>
-				val u = await(dao.Users.create(None, None, None, None, GUEST))
-				
-				setSession( "id" -> u.id.get.toString ) & provide( u )
-			case Some( s ) :: HNil => provide( await(dao.Users.find(s.data("id").toInt)).get )
+			case None :: HNil => guest
+			case Some( s ) :: HNil =>
+				await( dao.Users.find(s.data("id").toInt) ) match {
+					case Some( u ) => provide( u )
+					case None => guest
+				}
 		}
 		
 // 		def admin: Directive[dao.Blog :: models.User :: HNil] = (blog & session) hflatMap {
