@@ -3,6 +3,7 @@ app = angular.module 'cramsite', ['ngResource']
 app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Files = $resource '/api/v1/files/:id'
 	Lessons = $resource '/api/v1/lessons/:id'
+	Response = $resource '/api/v1/response'
 	ChunkSize = 6
 	$scope.message = {type: 'none'}
 
@@ -36,15 +37,28 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	
 	$scope.startCramming = ->
 		$scope.start = true
+		$scope.complete = false
 		challenge()
 	
 	$scope.respond = ->
-		if $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
+		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
+		if correct
 			$scope.message = {type: 'success', text: "Right!"}
 		else
 			$scope.message = {type: 'error', text: "Wrong: \"" + $scope.lesson.pairs[$scope.challengeIndex].back + "\""}
 			
 		$scope.response = ""
+		Response.save
+			userid: $scope.userid
+			pairid: $scope.lesson.pairs[$scope.challengeIndex].id
+			correct: correct
+		, (result, response) ->
+			if result.complete
+				$scope.complete = true
+				$scope.message = {type: 'success', text: "You finished!"}
+		, (response) ->
+			$scope.message = {type: 'error', text: response.data}
+			
 		challenge()
 	
 	challenge = ->

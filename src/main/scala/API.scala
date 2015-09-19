@@ -61,7 +61,8 @@ object API extends SessionDirectives {
 	
 	def lessonsIn( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
 	
-// 	def comments( postid: Int, authorid: Option[Int], name: Option[String], email: Option[String], url: String, replyto: Option[Int], content: String ) =
-// 		Comments.create( postid, authorid, name, email, if (url == "") None else Some(url), Instant.now, replyto, content ) map (id => Map( "id" -> id ))
+	def response( r: models.Response ) = {
+		Map( "complete" -> false )
+	}
 	
 }

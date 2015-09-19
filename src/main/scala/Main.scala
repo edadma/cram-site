@@ -19,6 +19,8 @@ import in.azeemarshad.common.sessionutils.SessionDirectives
 import concurrent.duration._
 import util.{Success, Failure}
 
+import models._
+
 
 object Main extends App with SimpleRoutingApp with SessionDirectives {
 
@@ -125,6 +127,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.filesUnder(id) ) } ~
 			(get & path("lessons"/IntNumber)) { id =>
 				complete( API.lessonsIn(id) ) } ~
+			(post & path("response") & entity(as[Response])) { r =>
+				complete( API.response(r) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {

@@ -50,10 +50,15 @@ object Views {
 				<script src="/coffee/main.js"></script>
 			</xml:group>
 		} {
-			<div ng-app="cramsite" ng-controller="MainController" ng-cloak="">
+			<div ng-app="cramsite" ng-controller="MainController" ng-init={"userid = " + user.id.get} ng-cloak="">
 				<div class="jumbotron">
-					<div class="container">
-						<h1><button class="btn pull-right">Sign up</button><button class="btn btn-primary pull-right thin-right">Sign in</button></h1><h1>The Cram Site</h1>
+					<div class="container"> {
+						if (user.status == GUEST)
+							<h1><button class="btn pull-right">Sign up</button><button class="btn btn-primary pull-right thin-right">Sign in</button></h1>
+						else
+							<h1><button class="btn btn-primary pull-right">Sign out</button><span class="pull-right thin-right">{user.name}</span></h1>
+						}
+						<h1>The Cram Site</h1>
 						<p>for cramming information into your head <em>fast</em></p>
 					</div>
 				</div>
@@ -71,8 +76,8 @@ object Views {
 						<button ng-show={"file && !start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Start Cramming!</button>
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Rename Lesson</button>
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
-						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-warning navbar-btn">Pause Cramming</button>
-						<button ng-show={"file && start"} class="btn btn-danger navbar-btn">Restart Cram Session</button>
+						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
+						<button ng-show={"file && start"} class="btn btn-success navbar-btn">Restart Cram Session</button>
 						<button ng-show="isUnderTopics()" class="btn btn-default navbar-btn">Create Folder</button>
 						<button ng-show="isUnderATopic()" class="btn btn-default navbar-btn">Rename Folder</button>
 					</div>

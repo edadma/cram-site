@@ -20,6 +20,16 @@ object UserJson {
 	implicit val userJson = jsonFormat4( UserJson.apply )
 }
 
+case class Response(
+	userid: Int,
+	pairid: Int,
+	correct: Boolean
+)
+
+object Response {
+	implicit val response = jsonFormat3( Response.apply )
+}
+
 case class VisitJson(
 	id: Int,
 	ip: String,
