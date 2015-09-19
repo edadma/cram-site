@@ -71,7 +71,7 @@ object Views {
 						<button ng-show={"file && !start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Start Cramming!</button>
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Rename Lesson</button>
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
-						<button ng-show={"file && start"} class="btn btn-warning navbar-btn">Pause Cramming</button>
+						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-warning navbar-btn">Pause Cramming</button>
 						<button ng-show={"file && start"} class="btn btn-danger navbar-btn">Restart Cram Session</button>
 						<button ng-show="isUnderTopics()" class="btn btn-default navbar-btn">Create Folder</button>
 						<button ng-show="isUnderATopic()" class="btn btn-default navbar-btn">Rename Folder</button>
