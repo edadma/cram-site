@@ -35,20 +35,15 @@ object API extends SessionDirectives {
 // 		else
 // 			Blogs.find( domain ) map (u => Map( "available" -> (u == None) ))
 
-	def usersGet( userid: Int ) = Users.find(userid) map (u => u map (models.User.from(_)))
+	def usersGet( userid: Int ) = Users.find(userid)
+	
+	def usersGet = Users.list
 	
 	def usersPost( u: models.UserJson ) = {
-		Users.find( u.email ) flatMap {
+		Users.findByEmail( u.email ) flatMap {
 			case None =>
-				Users.create( u.name, u.email, u.password, None ) flatMap {
-					id =>
-						val response = HttpResponse( status = StatusCodes.Created, s"""{"id": $id}""" )
-						
-						u.role match {
-							case Some( r ) =>
-								Roles.create( id, r ) map (_ => response)
-							case None => Future( response )
-						}
+				Users.create( Some(u.name), Some(u.email), Some(u.password), None, USER ) map {
+					id => HttpResponse( status = StatusCodes.Created, s"""{"id": $id}""" )
 				}
 			case _ => Future( HttpResponse(status = StatusCodes.Conflict, "A user with that email address already exists.") )
 		}

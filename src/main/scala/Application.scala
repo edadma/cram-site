@@ -16,16 +16,16 @@ import util.{Try, Success, Failure}
 
 object Application extends SessionDirectives {
 	
-	def logVisit( ip: RemoteAddress, path: String, referrer: Option[String], user: Option[models.User] ) {
+	def logVisit( ip: RemoteAddress, path: String, referrer: Option[String], user: Option[dao.User] ) {
 		Future( ip.toOption.map(_.getHostName) ) onComplete {
 			case Success(host) =>
-				dao.Visits.create( ip.toString, host, path, referrer, Instant.now, user map (_.id) )
+				dao.Visits.create( ip.toString, host, path, referrer, Instant.now, user map (_.id.get) )
 			case Failure(e) =>
 				log.info( e toString )
 		}
 	}
 	
-	def index( user: Option[models.User] ) = Views.index
+	def index( user: dao.User ) = Views.index( user )
 	
 	def login = Views.login
 	

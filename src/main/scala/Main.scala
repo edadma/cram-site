@@ -16,8 +16,6 @@ import shapeless._
 
 import in.azeemarshad.common.sessionutils.SessionDirectives
 
-import models._
-
 import concurrent.duration._
 import util.{Success, Failure}
 
@@ -39,11 +37,19 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 // 					case None => reject
 // 					case Some( b ) => provide( b )
 // 				}
-// 		}
+//		}
 		
-		def user: Directive[Option[models.User] :: HNil] = optionalSession hflatMap {
+		def optionalUser: Directive[Option[dao.User] :: HNil] = optionalSession hflatMap {
 			case None :: HNil => provide( None )
-			case Some( s ) :: HNil => provide( Queries.findUser(s.data("id").toInt) )
+			case Some( s ) :: HNil => provide( await(dao.Users.find(s.data("id").toInt)) )
+		}
+		
+		def user: Directive[dao.User :: HNil] = optionalSession hflatMap {
+			case None :: HNil =>
+				val u = await(dao.Users.create(None, None, None, None, GUEST))
+				
+				setSession( "id" -> u.id.get.toString ) & provide( u )
+			case Some( s ) :: HNil => provide( await(dao.Users.find(s.data("id").toInt)).get )
 		}
 		
 // 		def admin: Directive[dao.Blog :: models.User :: HNil] = (blog & session) hflatMap {
@@ -57,8 +63,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		//
 		// robots.txt request logging
 		//
-		(get & pathPrefixTest( "robots.txt" ) & clientIP & unmatchedPath & user) { (ip, path, user) =>
-			Application.logVisit( ip, path toString, None, user )
+		(get & pathPrefixTest( "robots.txt" ) & clientIP & unmatchedPath) { (ip, path) =>
+			Application.logVisit( ip, path toString, None, None )
 			reject } ~
 		//
 		// resource renaming routes (these will mostly be removed as soon as possible)
@@ -76,9 +82,10 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		//
 		// application request logging (ignores admin and api requests)
 		//
-		(get & pathPrefixTest( !("api"|"setup-admin"|"admin") ) & clientIP & unmatchedPath & optionalHeaderValueByName( "Referer" ) & user) { (ip, path, referrer, user) =>
-			Application.logVisit( ip, path toString, referrer, user )
-			reject } ~
+		(get & pathPrefixTest( !("api"|"setup-admin"|"admin") ) & clientIP & unmatchedPath & optionalHeaderValueByName( "Referer" ) & optionalUser) {
+			(ip, path, referrer, user) =>
+				Application.logVisit( ip, path toString, referrer, user )
+				reject } ~
 		//
 		// application routes
 		//
@@ -110,7 +117,7 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 			(get & path("files"/IntNumber)) { id =>
 				complete( API.filesUnder(id) ) } ~
 			(get & path("lessons"/IntNumber)) { id =>
-				complete( API.lessonsIn(id) ) }
+				complete( API.lessonsIn(id) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {
@@ -121,8 +128,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 // 				u => complete( API.usersPost(u) ) } ~
 // 			(get & path("users"/Segment)) {
 // 				email => complete( API.users(email) ) } ~
-// 			(get & path("users")) {
-// 				complete( API.users ) } ~
+			(get & path("users")) {
+				complete( API.usersGet ) }
 		}
 	}
 }

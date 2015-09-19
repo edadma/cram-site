@@ -16,6 +16,11 @@ import concurrent.duration._
 
 package object cramsite {
 
+	val GUEST = 0
+	val USER = 1
+	val ADMIN = 2
+	val SUADMIN = 3
+	
 	def await[T]( a: Awaitable[T] ) = Await.result( a, Duration.Inf )
 	
 	val log = Logging( Main.akka, getClass )

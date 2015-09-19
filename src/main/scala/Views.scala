@@ -41,7 +41,7 @@ object Views {
 			</body>
 		</html>
 	
-	def index =
+	def index( user: dao.User ) =
 		main( "The Cram Site" ) {
 			<xml:group>
 				<link href="/sass/main.css" rel="stylesheet"/>

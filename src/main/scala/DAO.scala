@@ -15,79 +15,51 @@ import xyz.hyperreal.cramsite._
 
 
 case class User(
-	name: String,
-	email: String,
-	password: String,
-	avatar: Option[Array[Byte]],
-	thumb: Option[Array[Byte]],
+	name: Option[String],
+	email: Option[String],
+	password: Option[String],
+	avatar: Option[Int],
 	registered: Instant,
+	status: Byte,
 	id: Option[Int] = None
 )
 
+object User {
+	implicit val user = jsonFormat7(User.apply)
+}
+
 class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-	def name = column[String]("name")
-	def email = column[String]("email")
-	def password = column[String]("password")
-	def avatar = column[Option[Array[Byte]]]("avatar")
-	def thumb = column[Option[Array[Byte]]]("thumb")
+	def name = column[Option[String]]("name")
+	def email = column[Option[String]]("email")
+	def password = column[Option[String]]("password")
+	def avatar = column[Option[Int]]("avatar")
 	def registered = column[Instant]("registered")
+	def status = column[Byte]("status")
 	
-	def * = (name, email, password, avatar, thumb, registered, id.?) <> (User.tupled, User.unapply)
-	def idx_users_email = index("idx_users_email", email, unique = true)
-	def idx_users_email_password = index("idx_users_email_password", (email, password), unique = true)
+	def * = (name, email, password, avatar, registered, status, id.?) <> (User.apply _ tupled, User.unapply)
+	def idx_users_name = index("idx_users_name", name, unique = true)
+ 	def idx_users_email = index("idx_users_email", email, unique = true)
+ 	def idx_users_password = index("idx_users_password", password)
 }
 
 object Users extends TableQuery(new UsersTable(_)) {
 	def find(id: Int): Future[Option[User]] = db.run( filter(_.id === id).result ) map (_.headOption)
 
-	def find( email: String ) = db.run( filter(_.email === email).result ) map (_.headOption)
+	def findByName( name: String ) = db.run( filter(_.name === name).result ) map (_.headOption)
+
+	def findByEmail( email: String ) = db.run( filter(_.email === email).result ) map (_.headOption)
 
 	def find( email: String, password: String ) = db.run( filter(r => r.email === email && r.password === password).result ) map (_.headOption)
 	
-	def create( name: String, email: String, password: String, avatar: Option[Array[Byte]] ) =
-		db.run( this returning map(_.id) += User(name, email, password, avatar, avatar, Instant.now) )
+	def create( name: Option[String], email: Option[String], password: Option[String], avatar: Option[Int], status: Int ) =
+		db.run( (this returning map(_.id) into ((user, id) => user.copy(id=Some(id)))) += User(name, email, password, avatar, Instant.now, status.asInstanceOf[Byte]) )
 
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
 	}
 	
 	def list: Future[Seq[User]] = db.run(this.result)
-}
-
-case class Role(
-	userid: Int,
-	role: String,
-	id: Option[Int] = None
-)
-
-object Role {
-	implicit val role = jsonFormat3(Role.apply)
-}
-
-class RolesTable(tag: Tag) extends Table[Role](tag, "roles") {
-	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-	def userid = column[Int]("userid")
-	def role = column[String]("role")
-	
-	def * = (userid, role, id.?) <> (Role.apply _ tupled, Role.unapply)
-	def user_fk = foreignKey("roles_user_fk", userid, Users)(_.id, onDelete=ForeignKeyAction.Cascade)
-	def idx_roles_userid = index("idx_roles_userid", userid)
-	def idx_roles_role = index("idx_roles_role", role)
-}
-
-object Roles extends TableQuery(new RolesTable(_)) {
-	def find(userid: Int): Future[Seq[Role]] = db.run( filter(_.userid === userid) result )
-
-	def find(blogid: Int, role: String): Future[Seq[Role]] = db.run( filter(r => r.role === role) result )
-
-	def create( userid: Int, role: String ) = db.run( this += Role(userid, role) )
-
-	def delete(userid: Int): Future[Int] = {
-		db.run(filter(r => r.userid === userid).delete)
-	}
-	
-	def list: Future[Seq[Role]] = db.run(this.result)
 }
 
 case class Pair(

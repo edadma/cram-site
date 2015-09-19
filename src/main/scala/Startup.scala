@@ -19,7 +19,6 @@ object Startup {
 		await(db.run(DBIO.seq(
 			(
 				Users.schema ++
-				Roles.schema ++
 				Files.schema ++
 				Pairs.schema ++
 				Tallies.schema ++
@@ -30,8 +29,8 @@ object Startup {
 		val conf = ConfigFactory.load
 		
 		if (conf hasPath "init") {
-			for (ou <- conf.opt[List[Map[String, String]]]("init.admin"); u <- ou)
-				Users.create( u("name"), u("email"), u("password"), None ) map (userid => Roles.create(userid, "admin"))
+			val u = conf.get[Map[String, String]]("init.suadmin")
+				Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN )
 		}
 		
 		Files.create( "/", "", Instant.now, None, false, None, None ) map {
