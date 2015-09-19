@@ -82,12 +82,22 @@ object Views {
 					
 					<div ng-show="file">
 						<div class="row">
-							<div class="col-md-8">
-								<div ng-show="start">
-									<p>{"{{challenge}}"}</p>
-									<form ng-submit="respond()"><input type="text" ng-model="response" placeholder="Response" autofocus=""/></form>
+							<div ng-show="start">
+								<div class="col-md-6">
+									<form ng-submit="respond()">
+										<div class="form-group">
+											<label>Challenge:</label>
+											<p>{"{{challenge}}"}</p></div>
+										<div class="form-group">
+										<label>Response:</label>
+											<input type="text" class="form-control" ng-model="response" placeholder="Type your answer" autofocus=""/>
+										</div>
+									</form>
 								</div>
-								<div ng-hide="start">
+							</div>
+							
+							<div ng-hide="start">
+								<div class="col-md-8">
 									<div class="panel panel-default">
 										<div class="panel-heading">{"{{file.name}}"}</div>
 										<div class="panel-body"><p>{"{{file.description}}"}</p></div>
@@ -122,7 +132,7 @@ object Views {
 					</div>
 						
 					<div class="row">
-						<div class="col-md-5">
+						<div class="col-md-6">
 							<ng-include src="'/message.html'"></ng-include>
 						</div>
 					</div>

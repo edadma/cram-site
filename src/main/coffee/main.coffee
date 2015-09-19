@@ -39,12 +39,17 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		challenge()
 	
 	$scope.respond = ->
-		console.log "asdf"
+		if $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
+			$scope.message = {type: 'success', text: "Right!"}
+		else
+			$scope.message = {type: 'error', text: "Wrong: \"" + $scope.lesson.pairs[$scope.challengeIndex].back + "\""}
+			
+		$scope.response = ""
 		challenge()
 	
 	challenge = ->
-		challengeIndex = randomInt(0, $scope.lesson.pairs.length)
-		$scope.challenge = $scope.lesson.pairs[challengeIndex].front
+		$scope.challengeIndex = randomInt(0, $scope.lesson.pairs.length)
+		$scope.challenge = $scope.lesson.pairs[$scope.challengeIndex].front
 		
 	randomInt = (min, max) -> Math.floor(Math.random() * (max - min)) + min
 		
