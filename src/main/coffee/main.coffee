@@ -1,16 +1,18 @@
 app = angular.module 'cramsite', ['ngResource']
 
 app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
+	$scope.message = {type: 'none'}
+	$scope.path = []
+	$scope.file = undefined
+	ChunkSize = 6
 	Files = $resource '/api/v1/files/:id'
 	Lessons = $resource '/api/v1/lessons/:id'
 	Response = $resource '/api/v1/response'
-	ChunkSize = 6
-	$scope.message = {type: 'none'}
-
+	
 	home = ->
-		$scope.path = []
-		$scope.file = undefined
 		Files.query (result, response) ->
+			$scope.path = []
+			$scope.file = undefined
 			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
@@ -51,6 +53,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		Response.save
 			userid: $scope.userid
 			pairid: $scope.lesson.pairs[$scope.challengeIndex].id
+			fileid: $scope.file.id
 			correct: correct
 		, (result, response) ->
 			if result.complete
@@ -68,17 +71,17 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	randomInt = (min, max) -> Math.floor(Math.random() * (max - min)) + min
 		
 	directory = (dir) ->
-		$scope.file = undefined
 		Files.query {id: dir.id}, (result, response) ->
+			$scope.file = undefined
 			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		
 	open = (file) ->
-		$scope.start = false
-		challengeIndex = undefined
-		$scope.file = file
 		Lessons.get {id: file.id}, (result, response) ->
+			$scope.start = false
+			challengeIndex = undefined
+			$scope.file = file
 			$scope.lesson = result
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}

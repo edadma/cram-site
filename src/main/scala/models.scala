@@ -23,11 +23,12 @@ object UserJson {
 case class Response(
 	userid: Int,
 	pairid: Int,
+	fileid: Int,
 	correct: Boolean
 )
 
 object Response {
-	implicit val response = jsonFormat3( Response.apply )
+	implicit val response = jsonFormat4( Response.apply )
 }
 
 case class VisitJson(

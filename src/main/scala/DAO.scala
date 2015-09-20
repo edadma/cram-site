@@ -101,8 +101,8 @@ object Pairs extends TableQuery(new PairsTable(_)) {
 
 case class Tally(
 	userid: Int,
-	fileid: Int,
 	pairid: Int,
+	fileid: Int,
 	correct: Int
 )
 
@@ -112,15 +112,15 @@ object Tally {
 
 class TalliesTable(tag: Tag) extends Table[Tally](tag, "tallies") {
 	def userid = column[Int]("userid")
-	def fileid = column[Int]("fileid")
 	def pairid = column[Int]("pairid")
+	def fileid = column[Int]("fileid")
 	def correct = column[Int]("correct")
 	
-	def * = (userid, fileid, pairid, correct) <> (Tally.apply _ tupled, Tally.unapply)
-	def pk = primaryKey("pk_tallies", (userid, fileid, pairid))
+	def * = (userid, pairid, fileid, correct) <> (Tally.apply _ tupled, Tally.unapply)
+	def pk = primaryKey("pk_tallies", (userid, pairid))
 	def user_fk = foreignKey("tallies_user_fk", userid, Users)(_.id, onDelete=ForeignKeyAction.Cascade)
-	def file_fk = foreignKey("tallies_file_fk", fileid, Files)(_.id, onDelete=ForeignKeyAction.Cascade)
 	def pair_fk = foreignKey("tallies_pair_fk", pairid, Pairs)(_.id, onDelete=ForeignKeyAction.Cascade)
+	def file_fk = foreignKey("tallies_file_fk", fileid, Files)(_.id, onDelete=ForeignKeyAction.Cascade)
 }
 
 object Tallies extends TableQuery(new TalliesTable(_)) {
@@ -128,8 +128,8 @@ object Tallies extends TableQuery(new TalliesTable(_)) {
 
 	def create(
 		userid: Int,
-		fileid: Int,
 		pairid: Int,
+		fileid: Int,
 		correct: Int
 		) = db.run( this += Tally(userid, fileid, pairid, correct) )
 

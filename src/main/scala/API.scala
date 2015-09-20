@@ -62,6 +62,7 @@ object API extends SessionDirectives {
 	def lessonsIn( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
 	
 	def response( r: models.Response ) = {
+		
 		Map( "complete" -> false )
 	}
 	
