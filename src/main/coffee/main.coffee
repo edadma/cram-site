@@ -52,7 +52,6 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			$scope.message = {type: 'error', text: response.data}		
 	
 	$scope.respond = ->
-		console.log [$scope.lesson.pairs.length, $scope.challengeIndex]
 		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
 		
 		if correct
@@ -90,16 +89,18 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 					indices.splice( $scope.challengeIndex, 1 )
 					$scope.challengeIndex = indices[randomInt(0, $scope.lesson.pairs.length - 1)]
 				
-			console.log [$scope.lesson.pairs.length, $scope.challengeIndex]
 			$scope.challenge = $scope.lesson.pairs[$scope.challengeIndex].front
 		
 	randomInt = (min, max) -> Math.floor(Math.random()*(max - min)) + min
 		
 	directory = (dir) ->
 		$scope.message = {type: 'none'}
+		$scope.file = undefined
 		Files.query {id: dir.id}, (result, response) ->
-			$scope.file = undefined
-			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
+			if result.length == 0
+				$scope.chunks = []
+			else
+				$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		

@@ -54,9 +54,7 @@ object API extends SessionDirectives {
 	
 	//def users = Users.list map (u => u map (models.User.from(_)))
 	
-	def filesUnderRoot = {
-		Files.findUnder( rootid )
-	}
+	def filesUnderRoot = Files.findUnder( rootid )
 	
 	def filesUnder( parentid: Int ) = Files.findUnder( parentid )
 	
