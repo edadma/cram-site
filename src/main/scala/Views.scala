@@ -54,7 +54,7 @@ object Views {
 				<div class="jumbotron">
 					<div class="container"> {
 						if (user.status == GUEST)
-							<div class="pull-right"><button class="btn btn-primary thin-right">Sign in</button><button class="btn">Sign up</button></div>
+							<div class="pull-right"><h1><button class="btn btn-primary thin-right">Sign in</button><button class="btn btn-default">Sign up</button></h1></div>
 						else
 							<h1><button class="btn btn-primary pull-right">Sign out</button><span class="pull-right thin-right">{user.name}</span></h1>
 						}
@@ -77,7 +77,7 @@ object Views {
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Rename Lesson</button>
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
-						<button ng-show={"file && start"} class="btn btn-success navbar-btn">Restart Cram Session</button>
+						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
 						<button ng-show="isUnderTopics()" class="btn btn-default navbar-btn">Create Folder</button>
 						<button ng-show="isUnderATopic()" class="btn btn-default navbar-btn">Rename Folder</button>
 					</div>
@@ -87,7 +87,7 @@ object Views {
 					
 					<div ng-show="file">
 						<div class="row">
-							<div ng-show="start">
+							<div ng-show={"start && !complete"}>
 								<div class="col-md-6">
 									<form ng-submit="respond()">
 										<div class="form-group">
@@ -111,7 +111,7 @@ object Views {
 												<th>Front</th>
 												<th>Back</th>
 											</tr>
-											<tr ng-repeat="pair in lesson.pairs">
+											<tr ng-repeat="pair in lessonData.pairs">
 												<td>{"{{pair.front}}"}</td>
 												<td>{"{{pair.back}}"}</td>
 											</tr>

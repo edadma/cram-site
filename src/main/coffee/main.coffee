@@ -39,18 +39,20 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.isUnderATopic = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
 	
 	$scope.startCramming = ->
-		$scope.start = true
-		$scope.complete = false
 		Tallies.get
 			fileid: $scope.file.id
 			userid: $scope.userid
 		, (result, response) ->
-			null
+			$scope.start = true
+			$scope.complete = false
+			$scope.challengeIndex = undefined
+			$scope.lesson = angular.copy( $scope.lessonData )
+			challenge()
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}		
-		challenge()
 	
 	$scope.respond = ->
+		console.log [$scope.lesson.pairs.length, $scope.challengeIndex]
 		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
 		
 		if correct
@@ -58,7 +60,6 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		else
 			$scope.message = {type: 'error', text: "Wrong: \"" + $scope.lesson.pairs[$scope.challengeIndex].back + "\""}
 			
-		$scope.response = ""
 		Response.save
 			userid: $scope.userid
 			pairid: $scope.lesson.pairs[$scope.challengeIndex].id
@@ -66,23 +67,36 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			correct: correct
 		, (result, response) ->
 			if result.done
-				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
-				
-				if $scope.lesson.pairs.length == 0
+				if $scope.lesson.pairs.length == 1
 					$scope.complete = true
 					$scope.message = {type: 'success', text: "You finished!"}
+			$scope.response = ""
+			challenge( result.done )
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
 			
-		challenge()
-	
-	challenge = ->
-		$scope.challengeIndex = randomInt(0, $scope.lesson.pairs.length)
-		$scope.challenge = $scope.lesson.pairs[$scope.challengeIndex].front
+	challenge = (done) ->
+		if !$scope.complete
+			if done
+				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
+
+			if $scope.lesson.pairs.length == 1
+				$scope.challengeIndex = 0
+			else
+				if done or $scope.challengeIndex == undefined
+					$scope.challengeIndex = randomInt( 0, $scope.lesson.pairs.length )
+				else
+					indices = (i for i in [0..$scope.lesson.pairs.length - 1])
+					indices.splice( $scope.challengeIndex, 1 )
+					$scope.challengeIndex = indices[randomInt(0, $scope.lesson.pairs.length - 1)]
+				
+			console.log [$scope.lesson.pairs.length, $scope.challengeIndex]
+			$scope.challenge = $scope.lesson.pairs[$scope.challengeIndex].front
 		
-	randomInt = (min, max) -> Math.floor(Math.random() * (max - min)) + min
+	randomInt = (min, max) -> Math.floor(Math.random()*(max - min)) + min
 		
 	directory = (dir) ->
+		$scope.message = {type: 'none'}
 		Files.query {id: dir.id}, (result, response) ->
 			$scope.file = undefined
 			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
@@ -90,11 +104,12 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			$scope.message = {type: 'error', text: response.data}
 		
 	open = (file) ->
+		$scope.message = {type: 'none'}
 		Lessons.get {id: file.id}, (result, response) ->
 			$scope.start = false
 			challengeIndex = undefined
 			$scope.file = file
-			$scope.lesson = result
+			$scope.lessonData = result
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		
