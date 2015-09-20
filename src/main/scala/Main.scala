@@ -129,6 +129,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.lessonsIn(id) ) } ~
 			(post & path("response") & entity(as[Response])) { r =>
 				complete( API.response(r) ) } ~
+			(get & path("tallies"/IntNumber/IntNumber)) { (fileid, userid) =>
+				complete( API.talliesGet(fileid, userid) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {

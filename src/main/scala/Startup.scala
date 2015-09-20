@@ -45,7 +45,7 @@ object Startup {
 							bob =>
 								Files.create( "French 101", "French vocabulary", Instant.now, Some(bob), true, Some("{direction:bi}"), None ) map {
 									french101 =>
-										Pairs.create( french101, "one", "un(e)" )
+										Pairs.create( french101, "one", "un" )
 										Pairs.create( french101, "two", "deux" )
 								}
 						}

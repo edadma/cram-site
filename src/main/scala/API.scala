@@ -22,6 +22,7 @@ import dao._
 
 object API extends SessionDirectives {
 	
+	val LIMIT = 2
   val conf = ConfigFactory.load
 	val reserved = conf.opt[List[String]]( "blog.domain.reserved" )
 
@@ -62,8 +63,30 @@ object API extends SessionDirectives {
 	def lessonsIn( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
 	
 	def response( r: models.Response ) = {
+		var done = false
 		
-		Map( "complete" -> false )
+		Tallies.findByPairid( r.pairid, r.userid ) flatMap {
+			t => Tallies.update( r.pairid, r.userid,
+				(t.get.correct, r.correct) match {
+					case (c, false) if c <= 2 => 0
+					case (c, false) => c - 2
+					case (LIMIT, true) =>
+						done = true
+						LIMIT
+					case (c, true) =>
+						done = c + 1 == LIMIT
+						c + 1
+				})
+		} map {
+			ts => Map( "done" -> done )
+		}
 	}
 	
+	def talliesGet( fileid: Int, userid: Int ) = {
+		Tallies.delete( fileid, userid ) flatMap { _ =>
+			Pairs.find( fileid )
+		} flatMap {
+			ps => Future sequence (ps map (p => Tallies.create( userid, p.id.get, fileid, 0 )))
+		} map (_ => Map[String, String]())
+	}
 }

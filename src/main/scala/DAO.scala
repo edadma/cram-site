@@ -118,24 +118,28 @@ class TalliesTable(tag: Tag) extends Table[Tally](tag, "tallies") {
 	
 	def * = (userid, pairid, fileid, correct) <> (Tally.apply _ tupled, Tally.unapply)
 	def pk = primaryKey("pk_tallies", (userid, pairid))
+	def idx_user = index("idx_tallies_user", userid)
+	def idx_file = index("idx_tallies_file", fileid)
 	def user_fk = foreignKey("tallies_user_fk", userid, Users)(_.id, onDelete=ForeignKeyAction.Cascade)
 	def pair_fk = foreignKey("tallies_pair_fk", pairid, Pairs)(_.id, onDelete=ForeignKeyAction.Cascade)
 	def file_fk = foreignKey("tallies_file_fk", fileid, Files)(_.id, onDelete=ForeignKeyAction.Cascade)
 }
 
 object Tallies extends TableQuery(new TalliesTable(_)) {
-	def find(fileid: Int): Future[Seq[Tally]] = db.run( filter(_.fileid === fileid) result )
+	def findByFileid( fileid: Int, userid: Int ): Future[Seq[Tally]] = db.run( filter(t => t.fileid === fileid && t.userid === userid) result )
+
+	def findByPairid( pairid: Int, userid: Int ) = db.run( filter(t => t.pairid === pairid && t.userid === userid) result ) map (_.headOption)
 
 	def create(
 		userid: Int,
 		pairid: Int,
 		fileid: Int,
 		correct: Int
-		) = db.run( this += Tally(userid, fileid, pairid, correct) )
+		) = db.run( this += Tally(userid, pairid, fileid, correct) )
 
-	def delete(fileid: Int): Future[Int] = {
-		db.run(filter(_.fileid === fileid).delete)
-	}
+	def delete( fileid: Int, userid: Int ): Future[Int] = db.run( filter(t => t.fileid === fileid && t.userid === userid).delete )
+	
+	def update( pairid: Int, userid: Int, correct: Int ) = db.run( filter(t => t.pairid === pairid && t.userid === userid) map (p => p.correct) update correct )
 	
 	def list: Future[Seq[Tally]] = db.run(this.result)
 }

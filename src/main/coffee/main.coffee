@@ -8,6 +8,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Files = $resource '/api/v1/files/:id'
 	Lessons = $resource '/api/v1/lessons/:id'
 	Response = $resource '/api/v1/response'
+	Tallies = $resource '/api/v1/tallies/:fileid/:userid'
 	
 	home = ->
 		Files.query (result, response) ->
@@ -40,10 +41,18 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.startCramming = ->
 		$scope.start = true
 		$scope.complete = false
+		Tallies.get
+			fileid: $scope.file.id
+			userid: $scope.userid
+		, (result, response) ->
+			null
+		, (response) ->
+			$scope.message = {type: 'error', text: response.data}		
 		challenge()
 	
 	$scope.respond = ->
 		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
+		
 		if correct
 			$scope.message = {type: 'success', text: "Right!"}
 		else
@@ -56,9 +65,12 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			fileid: $scope.file.id
 			correct: correct
 		, (result, response) ->
-			if result.complete
-				$scope.complete = true
-				$scope.message = {type: 'success', text: "You finished!"}
+			if result.done
+				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
+				
+				if $scope.lesson.pairs.length == 0
+					$scope.complete = true
+					$scope.message = {type: 'success', text: "You finished!"}
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
 			
