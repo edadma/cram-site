@@ -33,17 +33,17 @@ object Startup {
 				Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN )
 		}
 		
-		Files.create( "/", "", Instant.now, None, false, None, None ) map {
+		Files.create( "/", "", None, false, None, None ) map {
 			root =>
-				Files.create( "Topics", "Browse learning topics", Instant.now, Some(root), true, None, None ) map {
+				Files.create( "Topics", "Browse learning topics", Some(root), true, None, None ) map {
 					topics =>
-						Files.create( "Topic 1", "A topic", Instant.now, Some(topics), true, None, None )
+						Files.create( "Topic 1", "A topic", Some(topics), true, None, None )
 				}
-				Files.create( "Users", "Browse user folders", Instant.now, Some(root), true, None, None ) map {
+				Files.create( "Users", "Browse user folders", Some(root), true, None, None ) map {
 					users =>
-						Files.create( "Bob", "Bob's folder", Instant.now, Some(users), true, None, None ) map {
+						Files.create( "Bob", "Bob's folder", Some(users), true, None, None ) map {
 							bob =>
-								Files.create( "French 101", "French vocabulary", Instant.now, Some(bob), true, Some("{direction:bi}"), None ) map {
+								Files.create( "French 101", "French vocabulary", Some(bob), true, Some("{direction:bi}"), None ) map {
 									french101 =>
 										Pairs.create( french101, "one", "un" )
 										Pairs.create( french101, "two", "deux" )

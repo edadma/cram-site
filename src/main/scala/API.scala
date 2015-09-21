@@ -88,7 +88,14 @@ object API extends SessionDirectives {
 		} map (_ => Map[String, String]())
 	}
 	
-	def folderCreate( fileid: Int, name: String ) = {
-		
+	def folderCreate( parentid: Int, name: String, description: String ) = {
+		Files.find( parentid, name ) flatMap {
+			case None =>
+				Files.create( name, description, Some(parentid), true, None, None ) map { _ =>
+					ok()
+				}
+			case Some(_) =>
+				Future {conflict( s"Folder '$name' already exists" )}
+		}
 	}
 }

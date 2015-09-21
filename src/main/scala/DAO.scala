@@ -187,12 +187,11 @@ object Files extends TableQuery(new FilesTable(_)) {
 	def create(
 		name: String,
 		description: String,
-		created: Instant,
 		parentid: Option[Int],
 		visible: Boolean,
 		contents: Option[String],
 		imageid: Option[Int]
-		) = db.run( this returning map(_.id) += File(name, description, created, parentid, visible, contents, imageid) )
+		) = db.run( this returning map(_.id) += File(name, description, Instant.now, parentid, visible, contents, imageid) )
 
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)

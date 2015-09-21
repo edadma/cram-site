@@ -9,6 +9,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Lessons = $resource '/api/v1/lessons/:id'
 	Response = $resource '/api/v1/response'
 	Tallies = $resource '/api/v1/tallies/:fileid/:userid'
+	Folders = $resource '/api/v1/folders/:parentid/:name/:description'
 	
 	home = ->
 		$scope.show = 'directory'
@@ -45,8 +46,17 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		$scope.show = 'create-folder'
 	
 	$scope.createFolder = ->
+		dir = $scope.path[$scope.path.length - 1]
+		
 		if $scope.folderName != ""
-			console.log $scope.folderName
+			Folders.get
+				parentid: dir.id
+				name: $scope.folderName
+				description: $scope.folderDescription
+			, (result, response) ->
+				directory(dir)
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
 			
 	$scope.startCramming = ->
 		Tallies.get
