@@ -4,6 +4,7 @@ import slick.driver.H2Driver.api._
 
 import akka.event.Logging
 
+import spray.http.{StatusCodes, HttpResponse, HttpHeaders, HttpEntity}
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 import spray.httpx.unmarshalling.MalformedContent
@@ -35,4 +36,7 @@ package object cramsite {
 	
 	lazy val rootid = dao.Files.findRoot.head.id.get
 	
+	def ok( message: String = "" ) = HttpResponse( status = StatusCodes.OK, message )
+	
+	def conflict( message: String ) = HttpResponse( status = StatusCodes.Conflict, message )
 }

@@ -131,6 +131,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.response(r) ) } ~
 			(get & path("tallies"/IntNumber/IntNumber)) { (fileid, userid) =>
 				complete( API.talliesGet(fileid, userid) ) } ~
+// 			(get & path("folders"/IntNumber/Segment) & session) { (fileid, name, _) =>
+// 				complete( API.folderCreate(fileid, name) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {

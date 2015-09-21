@@ -50,13 +50,13 @@ object Views {
 				<script src="/coffee/main.js"></script>
 			</xml:group>
 		} {
-			<div ng-app="cramsite" ng-controller="MainController" ng-init={"userid = " + user.id.get} ng-cloak="">
+			<div ng-app="cramsite" ng-controller="MainController" ng-init={"user = {id: " + user.id.get + ", name: " + user.name + ", status: " + user.status + "}"} ng-cloak="">
 				<div class="jumbotron">
 					<div class="container"> {
 						if (user.status == GUEST)
 							<div class="pull-right"><h1><button class="btn btn-primary thin-right">Sign in</button><button class="btn btn-default">Sign up</button></h1></div>
 						else
-							<h1><button class="btn btn-primary pull-right">Sign out</button><span class="pull-right thin-right">{user.name}</span></h1>
+							<div class="pull-right"><h1><span class="label thin-right">{user.name}</span><button class="btn btn-primary">Sign out</button></h1></div>
 						}
 						<h1>The Cram Site</h1>
 						<p>for cramming information into your head <em>fast</em></p>
@@ -78,24 +78,28 @@ object Views {
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
-						<button ng-show="isUnderTopics()" class="btn btn-default navbar-btn">Create Folder</button>
-						<button ng-show="isUnderATopic()" class="btn btn-default navbar-btn">Rename Folder</button>
+						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Folder</button>
+						<button ng-show="showRenameFolder()" ng-click="renameFolder()" class="btn btn-default navbar-btn">Rename Folder</button>
 					</div>
 				</nav>
 				
 				<div class="main container">
 					
-					<div ng-show="file">
+					<div ng-show="show == 'file'">
 						<div class="row">
 							<div ng-show={"start && !complete"}>
 								<div class="col-md-6">
 									<form ng-submit="respond()">
 										<div class="form-group">
 											<label>Challenge:</label>
-											<p>{"{{challenge}}"}</p></div>
+											<p>{"{{challenge}}"}</p>
+										</div>
 										<div class="form-group">
-										<label>Response:</label>
-											<input type="text" class="form-control" ng-model="response" placeholder="Type your answer" autofocus=""/>
+											<label>Response:</label>
+											<input type="text" class="form-control" ng-model="response" placeholder="Enter your answer" autofocus=""/>
+										</div>
+										<div class="form-group">
+											<input class="btn btn-primary" type="submit"/>
 										</div>
 									</form>
 								</div>
@@ -116,13 +120,25 @@ object Views {
 												<td>{"{{pair.back}}"}</td>
 											</tr>
 										</table>
-									</div>						
-								</div>						
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 					
-					<div ng-hide="file">
+					<div ng-show="show == 'create-folder'">
+						<form ng-submit="createFolder()" class="form-inline">
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="folderName" placeholder="Enter folder name" autofocus=""/>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="folderDescription" placeholder="Enter folder description"/>
+							</div>
+							<button type="submit" class="btn btn-default">Create</button>
+						</form>
+					</div>
+					
+					<div ng-show="show == 'directory'">
 						<div class="row" ng-repeat="chunk in chunks">
 							<div class="col-md-2" ng-repeat="file in chunk">
 								<a class="thumbnail" ng-click="selectFile(file)">
@@ -135,7 +151,7 @@ object Views {
 							</div>
 						</div>
 					</div>
-						
+					
 					<div class="row">
 						<div class="col-md-6">
 							<ng-include src="'/message.html'"></ng-include>

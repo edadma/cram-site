@@ -11,6 +11,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Tallies = $resource '/api/v1/tallies/:fileid/:userid'
 	
 	home = ->
+		$scope.show = 'directory'
 		Files.query (result, response) ->
 			$scope.path = []
 			$scope.file = undefined
@@ -34,22 +35,32 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		$scope.path.splice( index + 1, $scope.path.length - index - 1 )
 		directory($scope.path[index])
 		
-	$scope.isUnderTopics = -> $scope.path.length > 0 && $scope.path[0].name == 'Topics'
+	$scope.showCreateFolder = -> $scope.path.length > 0 && $scope.path[0].name == 'Topics'
 	
-	$scope.isUnderATopic = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
+	$scope.showRenameFolder = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
 	
+	$scope.createFolderForm = ->
+		$scope.folderName = ""
+		$scope.folderDescription = ""
+		$scope.show = 'create-folder'
+	
+	$scope.createFolder = ->
+		if $scope.folderName != ""
+			console.log $scope.folderName
+			
 	$scope.startCramming = ->
 		Tallies.get
 			fileid: $scope.file.id
-			userid: $scope.userid
+			userid: $scope.user.id
 		, (result, response) ->
 			$scope.start = true
 			$scope.complete = false
 			$scope.challengeIndex = undefined
 			$scope.lesson = angular.copy( $scope.lessonData )
+			$scope.message = {type: 'none'}
 			challenge()
 		, (response) ->
-			$scope.message = {type: 'error', text: response.data}		
+			$scope.message = {type: 'error', text: response.data}
 	
 	$scope.respond = ->
 		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
@@ -60,7 +71,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			$scope.message = {type: 'error', text: "Wrong: \"" + $scope.lesson.pairs[$scope.challengeIndex].back + "\""}
 			
 		Response.save
-			userid: $scope.userid
+			userid: $scope.user.id
 			pairid: $scope.lesson.pairs[$scope.challengeIndex].id
 			fileid: $scope.file.id
 			correct: correct
@@ -96,6 +107,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	directory = (dir) ->
 		$scope.message = {type: 'none'}
 		$scope.file = undefined
+		$scope.show = 'directory'
 		Files.query {id: dir.id}, (result, response) ->
 			if result.length == 0
 				$scope.chunks = []
@@ -106,6 +118,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		
 	open = (file) ->
 		$scope.message = {type: 'none'}
+		$scope.show = 'file'
 		Lessons.get {id: file.id}, (result, response) ->
 			$scope.start = false
 			challengeIndex = undefined

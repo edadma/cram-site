@@ -87,4 +87,8 @@ object API extends SessionDirectives {
 			ps => Future sequence (ps map (p => Tallies.create( userid, p.id.get, fileid, 0 )))
 		} map (_ => Map[String, String]())
 	}
+	
+	def folderCreate( fileid: Int, name: String ) = {
+		
+	}
 }
