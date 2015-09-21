@@ -105,7 +105,31 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			challenge( result.done )
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
-			
+	
+	$scope.editFront = (index) ->
+		$scope.update = $scope.lessonData.pairs[index].front
+		$scope.editingFront = index
+		$scope.editingBack = undefined
+
+	$scope.updateFront = (index) ->
+		console.log [$scope.update, index]
+		$scope.editingFront = undefined
+	
+	$scope.editBack = (index) ->
+		$scope.update = $scope.lessonData.pairs[index].back
+		$scope.editingBack = index
+		$scope.editingFront = undefined
+
+	$scope.updateBack = (index) ->
+		console.log [$scope.update, index]
+		$scope.editingBack = undefined
+	
+	$scope.remove = (index) ->
+		console.log index
+	
+	$scope.add = ->
+		console.log [$scope.front, $scope.back]
+	
 	challenge = (done) ->
 		if !$scope.complete
 			if done
@@ -140,6 +164,8 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	open = (file) ->
 		$scope.message = {type: 'none'}
 		$scope.show = 'file'
+		$scope.editingFront = undefined
+		$scope.editingBack = undefined
 		Lessons.get {id: file.id}, (result, response) ->
 			$scope.start = false
 			challengeIndex = undefined

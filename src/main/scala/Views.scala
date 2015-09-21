@@ -99,25 +99,43 @@ object Views {
 											<input type="text" class="form-control" ng-model="response" placeholder="Enter your answer" autofocus=""/>
 										</div>
 										<div class="form-group">
-											<input class="btn btn-primary" type="submit"/>
+											<input type="submit" class="btn btn-primary"/>
 										</div>
 									</form>
 								</div>
 							</div>
 							
 							<div ng-hide="start">
-								<div class="col-md-8">
+								<div class="col-md-10">
 									<div class="panel panel-default">
 										<div class="panel-heading">{"{{file.name}}"}</div>
 										<div class="panel-body"><p>{"{{file.description}}"}</p></div>
-										<table class="table">
+										<table class="table table-hover" style="width: 100%">
 											<tr>
 												<th>Front</th>
 												<th>Back</th>
 											</tr>
 											<tr ng-repeat="pair in lessonData.pairs">
-												<td>{"{{pair.front}}"}</td>
-												<td>{"{{pair.back}}"}</td>
+												<td ng-click="editFront($index)">
+													<span ng-hide="editingFront == $index" ng-bind="pair.front"></span>
+													<form ng-show="editingFront == $index" ng-submit="updateFront($index)">
+														<input type="text" class="form-control" ng-model="update" autofocus=""/>
+													</form>
+												</td>
+												<td ng-click="editBack($index)">
+													<span ng-hide="editingBack == $index" ng-bind="pair.back"></span>
+													<form ng-show="editingBack == $index" ng-submit="updateBack($index)">
+														<input type="text" class="form-control" ng-model="update" autofocus=""/>
+													</form>
+												</td>
+												<td width="1"><button class="btn btn-danger" ng-click="remove($index)">Remove</button></td>
+											</tr>
+											<tr>
+												<form ng-submit="add()">
+													<td><input type="text" class="form-control" ng-model="front" placeholder="New flashcard front" autofocus=""/></td>
+													<td><input type="text" class="form-control" ng-model="back" placeholder="New flashcard back"/></td>
+													<td width="1"><input type="submit" class="btn btn-primary form-control" value="Add"/></td>
+												</form>
 											</tr>
 										</table>
 									</div>
