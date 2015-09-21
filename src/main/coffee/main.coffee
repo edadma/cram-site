@@ -4,12 +4,10 @@ app.controller 'LessonEditFormController', ['$scope', ($scope) ->
 
 	$scope.updateFront = (index) ->
 		console.log [$scope.valueFront, index]
-		delete $scope.editingFront
 		delete $scope.valueFront
 
 	$scope.updateBack = (index) ->
 		console.log [$scope.valueBack, index]
-		delete $scope.editingBack
 		delete $scope.valueBack
 		
 	]
