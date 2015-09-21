@@ -1,6 +1,20 @@
 app = angular.module 'cramsite', ['ngResource']
 
-app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
+app.controller 'LessonEditFormController', ['$scope', ($scope) ->
+
+	$scope.updateFront = (index) ->
+		console.log [$scope.valueFront, index]
+		delete $scope.editingFront
+		delete $scope.valueFront
+
+	$scope.updateBack = (index) ->
+		console.log [$scope.valueBack, index]
+		delete $scope.editingBack
+		delete $scope.valueBack
+		
+	]
+
+app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.message = {type: 'none'}
 	$scope.path = []
 	$scope.file = undefined
@@ -87,9 +101,9 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
 		
 		if correct
-			$scope.message = {type: 'success', text: "Right!"}
+			$scope.message = {type: 'success', text: 'Right!'}
 		else
-			$scope.message = {type: 'error', text: "Wrong: \"" + $scope.lesson.pairs[$scope.challengeIndex].back + "\""}
+			$scope.message = {type: 'error', text: 'Wrong: "' + $scope.lesson.pairs[$scope.challengeIndex].back + '"'}
 			
 		Response.save
 			userid: $scope.user.id
@@ -100,29 +114,21 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			if result.done
 				if $scope.lesson.pairs.length == 1
 					$scope.complete = true
-					$scope.message = {type: 'success', text: "You finished!"}
-			$scope.response = ""
+					$scope.message = {type: 'success', text: 'You finished!'}
+			$scope.response = ''
 			challenge( result.done )
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
 	
 	$scope.editFront = (index) ->
-		$scope.update = $scope.lessonData.pairs[index].front
+		$scope.valueFront = $scope.lessonData.pairs[index].front
 		$scope.editingFront = index
 		$scope.editingBack = undefined
-
-	$scope.updateFront = (index) ->
-		console.log [$scope.update, index]
-		$scope.editingFront = undefined
 	
 	$scope.editBack = (index) ->
-		$scope.update = $scope.lessonData.pairs[index].back
+		$scope.valueBack = $scope.lessonData.pairs[index].back
 		$scope.editingBack = index
 		$scope.editingFront = undefined
-
-	$scope.updateBack = (index) ->
-		console.log [$scope.update, index]
-		$scope.editingBack = undefined
 	
 	$scope.remove = (index) ->
 		console.log index
@@ -178,4 +184,4 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		$scope.path.push dir
 		directory(dir)
 
-	] )
+	]
