@@ -191,7 +191,7 @@ object Files extends TableQuery(new FilesTable(_)) {
 		visible: Boolean,
 		contents: Option[String],
 		imageid: Option[Int]
-		) = db.run( this returning map(_.id) += File(name, description, Instant.now, parentid, visible, contents, imageid) )
+		) = db.run( (this returning map(_.id) into ((file, id) => file.copy(id=Some(id)))) += File(name, description, Instant.now, parentid, visible, contents, imageid) )
 
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)

@@ -9,7 +9,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Lessons = $resource '/api/v1/lessons/:id'
 	Response = $resource '/api/v1/response'
 	Tallies = $resource '/api/v1/tallies/:fileid/:userid'
-	Folders = $resource '/api/v1/folders/:parentid/:name/:description'
+	Folders = $resource '/api/v1/folders/:parentid'
 	
 	home = ->
 		$scope.show = 'directory'
@@ -26,8 +26,7 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		if file.contents
 			open(file)
 		else
-			$scope.path.push file
-			directory(file)
+			enter(file)
 			
 	$scope.selectHome = ->
 		home()
@@ -38,23 +37,22 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		
 	$scope.showCreateFolder = -> $scope.path.length > 0 && $scope.path[0].name == 'Topics'
 	
-	$scope.showRenameFolder = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
+	$scope.showModifyFolder = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
 	
 	$scope.createFolderForm = ->
 		$scope.folderName = ""
 		$scope.folderDescription = ""
 		$scope.show = 'create-folder'
 	
+	$scope.createLessonForm = ->
+	
 	$scope.createFolder = ->
-		dir = $scope.path[$scope.path.length - 1]
-		
 		if $scope.folderName != ""
-			Folders.get
-				parentid: dir.id
+			Folders.save {parentid: $scope.path[$scope.path.length - 1].id},				
 				name: $scope.folderName
 				description: $scope.folderDescription
 			, (result, response) ->
-				directory(dir)
+				enter(result)
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
 			
@@ -137,5 +135,8 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		
-	
+	enter = (dir) ->
+		$scope.path.push dir
+		directory(dir)
+
 	] )

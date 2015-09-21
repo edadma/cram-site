@@ -78,8 +78,9 @@ object Views {
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
-						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Folder</button>
-						<button ng-show="showRenameFolder()" ng-click="renameFolder()" class="btn btn-default navbar-btn">Rename Folder</button>
+						<button ng-show="showModifyFolder()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
+						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
+						<button ng-show="showModifyFolder()" ng-click="renameFolder()" class="btn btn-default navbar-btn">Edit Topic</button>
 					</div>
 				</nav>
 				

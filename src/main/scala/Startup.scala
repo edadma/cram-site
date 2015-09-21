@@ -35,18 +35,18 @@ object Startup {
 		
 		Files.create( "/", "", None, false, None, None ) map {
 			root =>
-				Files.create( "Topics", "Browse learning topics", Some(root), true, None, None ) map {
+				Files.create( "Topics", "Browse learning topics", root.id, true, None, None ) map {
 					topics =>
-						Files.create( "Topic 1", "A topic", Some(topics), true, None, None )
+						Files.create( "Topic 1", "A topic", topics.id, true, None, None )
 				}
-				Files.create( "Users", "Browse user folders", Some(root), true, None, None ) map {
+				Files.create( "Users", "Browse user folders", root.id, true, None, None ) map {
 					users =>
-						Files.create( "Bob", "Bob's folder", Some(users), true, None, None ) map {
+						Files.create( "Bob", "Bob's folder", users.id, true, None, None ) map {
 							bob =>
-								Files.create( "French 101", "French vocabulary", Some(bob), true, Some("{direction:bi}"), None ) map {
+								Files.create( "French 101", "French vocabulary", bob.id, true, Some("{direction:bi}"), None ) map {
 									french101 =>
-										Pairs.create( french101, "one", "un" )
-										Pairs.create( french101, "two", "deux" )
+										Pairs.create( french101.id.get, "one", "un" )
+										Pairs.create( french101.id.get, "two", "deux" )
 								}
 						}
 				}

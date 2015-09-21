@@ -5,6 +5,7 @@ import com.github.kxbmap.configs._
 
 import spray.http.{StatusCodes, HttpResponse, HttpHeaders, HttpEntity}
 import spray.routing.directives.RouteDirectives._
+import spray.json._
 
 import org.joda.time.Instant
 
@@ -88,14 +89,14 @@ object API extends SessionDirectives {
 		} map (_ => Map[String, String]())
 	}
 	
-	def folderCreate( parentid: Int, name: String, description: String ) = {
-		Files.find( parentid, name ) flatMap {
+	def folderCreate( parentid: Int, info: models.FolderInfo ) = {
+		Files.find( parentid, info.name ) flatMap {
 			case None =>
-				Files.create( name, description, Some(parentid), true, None, None ) map { _ =>
-					ok()
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, None) map {
+					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>
-				Future {conflict( s"Folder '$name' already exists" )}
+				Future {conflict(s"Folder '${info.name}' already exists")}
 		}
 	}
 }
