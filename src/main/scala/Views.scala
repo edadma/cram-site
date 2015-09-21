@@ -73,8 +73,7 @@ object Views {
 				
 				<nav class="navbar navbar-default">
 					<div class="container">
-						<button ng-show={"file && !start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Start Cramming!</button>
-						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Rename Lesson</button>
+						<button ng-show={"file && !start && lessonData.pairs.length > 0"} ng-click="startCramming()" class="btn btn-success navbar-btn">Start Cramming!</button>
 						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
@@ -130,10 +129,22 @@ object Views {
 					<div ng-show="show == 'create-folder'">
 						<form ng-submit="createFolder()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderName" placeholder="Enter folder name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="folderName" placeholder="Enter topic name" autofocus=""/>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderDescription" placeholder="Enter folder description"/>
+								<input type="text" class="form-control" ng-model="folderDescription" placeholder="Enter topic description"/>
+							</div>
+							<button type="submit" class="btn btn-default">Create</button>
+						</form>
+					</div>
+					
+					<div ng-show="show == 'create-lesson'">
+						<form ng-submit="createLesson()" class="form-inline">
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="lessonName" placeholder="Enter lesson name" autofocus=""/>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="lessonDescription" placeholder="Enter lesson description"/>
 							</div>
 							<button type="submit" class="btn btn-default">Create</button>
 						</form>
@@ -143,7 +154,7 @@ object Views {
 						<div class="row" ng-repeat="chunk in chunks">
 							<div class="col-md-2" ng-repeat="file in chunk">
 								<a class="thumbnail" ng-click="selectFile(file)">
-									<img class="img-rounded" src="..." alt="..."/>
+									<img class="img-rounded"/>
 									<div class="caption">
 										<h4>{"{{file.name}}"}</h4>
 										<p>{"{{file.description}}"}</p>

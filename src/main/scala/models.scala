@@ -20,13 +20,13 @@ object UserJson {
 	implicit val userJson = jsonFormat4( UserJson.apply )
 }
 
-case class FolderInfo(
+case class FileInfo(
 	name: String,
 	description: Option[String]
 )
 
-object FolderInfo {
-	implicit val folderInfo = jsonFormat2( FolderInfo.apply )
+object FileInfo {
+	implicit val fileInfo = jsonFormat2( FileInfo.apply )
 }
 
 case class Response(

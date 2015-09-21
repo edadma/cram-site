@@ -59,7 +59,18 @@ object API extends SessionDirectives {
 	
 	def filesUnder( parentid: Int ) = Files.findUnder( parentid )
 	
-	def lessonsIn( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
+	def lessonsGet( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
+	
+	def lessonsPost( parentid: Int, info: models.FileInfo ) = {
+		Files.find( parentid, info.name ) flatMap {
+			case None =>
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("{direction:bi}"), None) map {
+					f => ok( f.toJson.compactPrint )
+				}
+			case Some(_) =>
+				Future {conflict(s"'${info.name}' already exists")}
+		}
+	}
 	
 	def response( r: models.Response ) = {
 		var done = false
@@ -89,14 +100,14 @@ object API extends SessionDirectives {
 		} map (_ => Map[String, String]())
 	}
 	
-	def folderCreate( parentid: Int, info: models.FolderInfo ) = {
+	def foldersPost( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
 				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, None) map {
 					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>
-				Future {conflict(s"Folder '${info.name}' already exists")}
+				Future {conflict(s"'${info.name}' already exists")}
 		}
 	}
 }

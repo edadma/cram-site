@@ -35,16 +35,14 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		$scope.path.splice( index + 1, $scope.path.length - index - 1 )
 		directory($scope.path[index])
 		
-	$scope.showCreateFolder = -> $scope.path.length > 0 && $scope.path[0].name == 'Topics'
+	$scope.showCreateFolder = -> $scope.path.length > 0 and $scope.path[0].name == 'Topics' and not $scope.file
 	
-	$scope.showModifyFolder = -> $scope.path.length > 1 && $scope.path[0].name == 'Topics'
+	$scope.showModifyFolder = -> $scope.path.length > 1 and $scope.path[0].name == 'Topics' and not $scope.file
 	
 	$scope.createFolderForm = ->
 		$scope.folderName = ""
 		$scope.folderDescription = ""
 		$scope.show = 'create-folder'
-	
-	$scope.createLessonForm = ->
 	
 	$scope.createFolder = ->
 		if $scope.folderName != ""
@@ -53,6 +51,21 @@ app.controller( 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 				description: $scope.folderDescription
 			, (result, response) ->
 				enter(result)
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
+	
+	$scope.createLessonForm = ->
+		$scope.lessonName = ""
+		$scope.lessonDescription = ""
+		$scope.show = 'create-lesson'
+	
+	$scope.createLesson = ->
+		if $scope.lessonName != ""
+			Lessons.save {id: $scope.path[$scope.path.length - 1].id},				
+				name: $scope.lessonName
+				description: $scope.lessonDescription
+			, (result, response) ->
+				open(result)
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
 			

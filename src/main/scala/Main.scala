@@ -126,13 +126,15 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 			(get & path("files"/IntNumber)) { id =>
 				complete( API.filesUnder(id) ) } ~
 			(get & path("lessons"/IntNumber)) { id =>
-				complete( API.lessonsIn(id) ) } ~
+				complete( API.lessonsGet(id) ) } ~
+			(post & path("lessons"/IntNumber) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
+				complete( API.lessonsPost(parentid, info) ) } ~
 			(post & path("response") & entity(as[Response])) { r =>
 				complete( API.response(r) ) } ~
 			(get & path("tallies"/IntNumber/IntNumber)) { (fileid, userid) =>
 				complete( API.talliesGet(fileid, userid) ) } ~
-			(post & path("folders"/IntNumber) & entity(as[FolderInfo]) & session) { (parentid, info, _) =>
-				complete( API.folderCreate(parentid, info) ) } ~
+			(post & path("folders"/IntNumber) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
+				complete( API.foldersPost(parentid, info) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {
