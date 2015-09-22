@@ -148,8 +148,16 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		console.log index
 	
 	$scope.add = ->
-		console.log [$scope.front, $scope.back]
-	
+		Lessons.save {id: $scope.file.id}
+			front: $scope.front
+			back: $scope.back
+		, (result, response) ->
+			$scope.front = ''
+			$scope.back = ''
+			open($scope.file)
+		,	(response) ->
+			$scope.message = {type: 'error', text: response.data}
+		
 	challenge = (done) ->
 		if !$scope.complete
 			if done
