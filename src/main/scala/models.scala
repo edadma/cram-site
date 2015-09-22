@@ -29,6 +29,15 @@ object FileInfo {
 	implicit val fileInfo = jsonFormat2( FileInfo.apply )
 }
 
+case class PairJson(
+	front: String,
+	back: String
+)
+
+object PairJson {
+	implicit val pairjson = jsonFormat2(PairJson.apply)
+}
+
 case class Response(
 	userid: Int,
 	pairid: Int,

@@ -1,14 +1,9 @@
 app = angular.module 'cramsite', ['ngResource']
 
-app.controller 'LessonEditFormController', ['$scope', ($scope) ->
-
-	$scope.updateFront = (index) ->
-		console.log [$scope.valueFront, index]
-		delete $scope.valueFront
-
-	$scope.updateBack = (index) ->
-		console.log [$scope.valueBack, index]
-		delete $scope.valueBack
+app.controller 'LessonEditFormController', ['$scope', '$resource', ($scope, $resource) ->
+	
+	$scope.clear = ->
+		delete $scope.value
 		
 	]
 
@@ -17,6 +12,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.path = []
 	$scope.file = undefined
 	ChunkSize = 6
+	Pairs = $resource '/api/v1/pairs/:id'
 	Files = $resource '/api/v1/files/:id'
 	Lessons = $resource '/api/v1/lessons/:id'
 	Response = $resource '/api/v1/response'
@@ -34,6 +30,26 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 
 	home()
 	
+	$scope.updateFront = (index, value) ->
+		$scope.editingFront = undefined
+		Pairs.save {id: $scope.lessonData.pairs[index].id},
+			front: value
+			back: $scope.lessonData.pairs[index].back
+		, (result, response) ->
+			open($scope.file)
+		, (response) ->
+			$scope.message = {type: 'error', text: response.data}
+		
+	$scope.updateBack = (index, value) ->
+		$scope.editingBack = undefined
+		Pairs.save {id: $scope.lessonData.pairs[index].id},
+			front: $scope.lessonData.pairs[index].front
+			back: value
+		, (result, response) ->
+			open($scope.file)
+		, (response) ->
+			$scope.message = {type: 'error', text: response.data}
+		
 	$scope.selectFile = (file) ->
 		if file.contents
 			open(file)
@@ -73,7 +89,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	
 	$scope.createLesson = ->
 		if $scope.lessonName != ""
-			Lessons.save {id: $scope.path[$scope.path.length - 1].id},				
+			Files.save {id: $scope.path[$scope.path.length - 1].id},				
 				name: $scope.lessonName
 				description: $scope.lessonDescription
 			, (result, response) ->
@@ -119,12 +135,12 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			$scope.message = {type: 'error', text: response.data}
 	
 	$scope.editFront = (index) ->
-		$scope.valueFront = $scope.lessonData.pairs[index].front
+		$scope.value = $scope.lessonData.pairs[index].front
 		$scope.editingFront = index
 		$scope.editingBack = undefined
 	
 	$scope.editBack = (index) ->
-		$scope.valueBack = $scope.lessonData.pairs[index].back
+		$scope.value = $scope.lessonData.pairs[index].back
 		$scope.editingBack = index
 		$scope.editingFront = undefined
 	

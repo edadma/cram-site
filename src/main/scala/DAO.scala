@@ -96,6 +96,8 @@ object Pairs extends TableQuery(new PairsTable(_)) {
 		db.run(filter(_.fileid === fileid).delete)
 	}
 	
+	def update( id: Int, front: String, back: String ) = db.run( filter(_.id === id) map (p => (p.front, p.back)) update (front, back) )
+	
 	def list: Future[Seq[Pair]] = db.run(this.result)
 }
 

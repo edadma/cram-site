@@ -61,7 +61,7 @@ object API extends SessionDirectives {
 	
 	def lessonsGet( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
 	
-	def lessonsPost( parentid: Int, info: models.FileInfo ) = {
+	def filesPost( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
 				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("{direction:bi}"), None) map {
@@ -70,6 +70,10 @@ object API extends SessionDirectives {
 			case Some(_) =>
 				Future {conflict(s"'${info.name}' already exists")}
 		}
+	}
+	
+	def pairsPost( id: Int, pair: models.PairJson ) = {
+		Pairs.update( id, pair.front, pair.back ) map (u => Map("updated" -> u))
 	}
 	
 	def response( r: models.Response ) = {

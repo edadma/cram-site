@@ -125,10 +125,12 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.filesUnderRoot ) } ~
 			(get & path("files"/IntNumber)) { id =>
 				complete( API.filesUnder(id) ) } ~
+			(post & path("files"/IntNumber) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
+				complete( API.filesPost(parentid, info) ) } ~
+			(post & path("pairs"/IntNumber) & entity(as[PairJson]) & session) { (id, pair, _) =>
+				complete( API.pairsPost(id, pair) ) } ~
 			(get & path("lessons"/IntNumber)) { id =>
 				complete( API.lessonsGet(id) ) } ~
-			(post & path("lessons"/IntNumber) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
-				complete( API.lessonsPost(parentid, info) ) } ~
 			(post & path("response") & entity(as[Response])) { r =>
 				complete( API.response(r) ) } ~
 			(get & path("tallies"/IntNumber/IntNumber)) { (fileid, userid) =>

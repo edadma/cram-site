@@ -118,14 +118,14 @@ object Views {
 											<tr ng-repeat="pair in lessonData.pairs">
 												<td ng-click="editFront($index)">
 													<span ng-hide="editingFront == $index" ng-bind="pair.front"></span>
-													<form ng-show="editingFront == $index" ng-submit="updateFront($index)" ng-controller="LessonEditFormController">
-														<input type="text" class="form-control" ng-model="valueFront" ng-blur="updateFront($index)" autofocus=""/>
+													<form ng-show="editingFront == $index" ng-submit="updateFront($index, value)" ng-controller="LessonEditFormController">
+														<input type="text" class="form-control" ng-model="value" ng-blur="clear()" autofocus=""/>
 													</form>
 												</td>
 												<td ng-click="editBack($index)">
 													<span ng-hide="editingBack == $index" ng-bind="pair.back"></span>
-													<form ng-show="editingBack == $index" ng-submit="updateBack($index)" ng-controller="LessonEditFormController">
-														<input type="text" class="form-control" ng-model="valueBack" ng-blur="updateBack($index)" autofocus=""/>
+													<form ng-show="editingBack == $index" ng-submit="updateBack($index, value)" ng-controller="LessonEditFormController">
+														<input type="text" class="form-control" ng-model="value" ng-blur="clear()" autofocus=""/>
 													</form>
 												</td>
 												<td width="1"><button class="btn btn-danger" ng-click="remove($index)">Remove</button></td>
