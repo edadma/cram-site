@@ -15,9 +15,9 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Pairs = $resource '/api/v1/pairs/:id'
 	Files = $resource '/api/v1/files/:id'
 	Lessons = $resource '/api/v1/lessons/:id'
-	Response = $resource '/api/v1/response'
-	Tallies = $resource '/api/v1/tallies/:fileid/:userid'
+	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
+	LIMIT = 3
 	
 	home = ->
 		$scope.show = 'directory'
@@ -116,13 +116,14 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			
 	$scope.startCramming = ->
 		Tallies.get
-			fileid: $scope.file.id
-			userid: $scope.user.id
+			id1: $scope.file.id
+			id2: $scope.user.id
 		, (result, response) ->
 			$scope.start = true
 			$scope.complete = false
 			$scope.challengeIndex = undefined
 			$scope.lesson = angular.copy( $scope.lessonData )
+			$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [1..$scope.lesson.pairs.length])
 			$scope.message = {type: 'none'}
 			challenge()
 		, (response) ->
@@ -131,25 +132,36 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.respond = ->
 		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
 		
-		if correct
-			$scope.message = {type: 'success', text: 'Right!'}
-		else
-			$scope.message = {type: 'error', text: 'Wrong: "' + $scope.lesson.pairs[$scope.challengeIndex].back + '"'}
-			
-		Response.save
-			userid: $scope.user.id
-			pairid: $scope.lesson.pairs[$scope.challengeIndex].id
-			fileid: $scope.file.id
-			correct: correct
+		$scope.lesson.tallies[$scope.challengeIndex].foreward +=
+			if correct
+				$scope.message = {type: 'success', text: 'Right!'}
+				1
+			else
+				$scope.message = {type: 'error', text: 'Wrong: "' + $scope.lesson.pairs[$scope.challengeIndex].back + '"'}
+				-2
+		
+		if $scope.lesson.tallies[$scope.challengeIndex].foreward < 0
+			$scope.lesson.tallies[$scope.challengeIndex].foreward = 0
+		
+		done = $scope.lesson.tallies[$scope.challengeIndex].foreward >= LIMIT
+		
+		if done
+			if $scope.lesson.pairs.length == 1
+				$scope.complete = true
+				$scope.message = {type: 'success', text: 'You finished!'}
+				
+		$scope.response = ''
+		Tallies.save
+			id1: $scope.user.id
+			id2: $scope.lesson.pairs[$scope.challengeIndex].id
+		,
+			foreward: $scope.lesson.tallies[$scope.challengeIndex].foreward
+			backward: $scope.lesson.tallies[$scope.challengeIndex].backward
 		, (result, response) ->
-			if result.done
-				if $scope.lesson.pairs.length == 1
-					$scope.complete = true
-					$scope.message = {type: 'success', text: 'You finished!'}
-			$scope.response = ''
-			challenge( result.done )
+			null
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
+		challenge( done )
 	
 	$scope.editFront = (index) ->
 		$scope.value = $scope.lessonData.pairs[index].front
