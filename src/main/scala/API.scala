@@ -6,6 +6,8 @@ import com.github.kxbmap.configs._
 import spray.http.{StatusCodes, HttpResponse, HttpHeaders, HttpEntity}
 import spray.routing.directives.RouteDirectives._
 import spray.json._
+import spray.json.DefaultJsonProtocol._
+import spray.httpx.SprayJsonSupport._
 
 import org.joda.time.Instant
 
@@ -110,7 +112,7 @@ object API extends SessionDirectives {
 		} map (_ => Map[String, String]())
 	}
 	
-	def foldersPost( parentid: Int, info: models.FileInfo ) = {
+	def foldersPostCreate( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
 				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, None) map {
@@ -118,6 +120,20 @@ object API extends SessionDirectives {
 				}
 			case Some(_) =>
 				Future {conflict(s"'${info.name}' already exists")}
+		}
+	}
+	
+	def foldersPost( id: Int, info: models.FileInfo ) = {
+		Files.find( id ) flatMap {
+			file =>
+				Files.find( file.get.parentid.get, info.name ) flatMap {
+					case None =>
+						Files.update(id, info.name, info.description.getOrElse("")) map {
+							u => ok( Map("updated" -> u).toJson.compactPrint )
+						}
+					case Some(_) =>
+						Future {conflict(s"'${info.name}' already exists")}
+				}
 		}
 	}
 }

@@ -79,7 +79,7 @@ object Views {
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
 						<button ng-show="showModifyFolder()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
 						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
-						<button ng-show="showModifyFolder()" ng-click="renameFolder()" class="btn btn-default navbar-btn">Edit Topic</button>
+						<button ng-show="showModifyFolder()" ng-click="editFolderForm()" class="btn btn-default navbar-btn">Edit Topic</button>
 					</div>
 				</nav>
 				
@@ -147,12 +147,24 @@ object Views {
 					<div ng-show="show == 'create-folder'">
 						<form ng-submit="createFolder()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderName" placeholder="Enter topic name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="folderName" placeholder="Topic name" autofocus=""/>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderDescription" placeholder="Enter topic description"/>
+								<input type="text" class="form-control" ng-model="folderDescription" placeholder="Topic description"/>
 							</div>
-							<button type="submit" class="btn btn-default">Create</button>
+							<button type="submit" class="btn btn-default">Submit</button>
+						</form>
+					</div>
+					
+					<div ng-show="show == 'edit-folder'">
+						<form ng-submit="editFolder()" class="form-inline">
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="folderName" placeholder="New Topic name" autofocus=""/>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="folderDescription" placeholder="New Topic description"/>
+							</div>
+							<button type="submit" class="btn btn-default">Submit</button>
 						</form>
 					</div>
 					
@@ -164,7 +176,7 @@ object Views {
 							<div class="form-group">
 								<input type="text" class="form-control" ng-model="lessonDescription" placeholder="Enter lesson description"/>
 							</div>
-							<button type="submit" class="btn btn-default">Create</button>
+							<button type="submit" class="btn btn-default">Submit</button>
 						</form>
 					</div>
 					

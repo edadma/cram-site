@@ -17,7 +17,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Lessons = $resource '/api/v1/lessons/:id'
 	Response = $resource '/api/v1/response'
 	Tallies = $resource '/api/v1/tallies/:fileid/:userid'
-	Folders = $resource '/api/v1/folders/:parentid'
+	Folders = $resource '/api/v1/folders/:id'
 	
 	home = ->
 		$scope.show = 'directory'
@@ -68,12 +68,12 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.showModifyFolder = -> $scope.path.length > 1 and $scope.path[0].name == 'Topics' and not $scope.file
 	
 	$scope.createFolderForm = ->
-		$scope.folderName = ""
-		$scope.folderDescription = ""
+		$scope.folderName = ''
+		$scope.folderDescription = ''
 		$scope.show = 'create-folder'
 	
 	$scope.createFolder = ->
-		if $scope.folderName != ""
+		if $scope.folderName != ''
 			Folders.save {parentid: $scope.path[$scope.path.length - 1].id},				
 				name: $scope.folderName
 				description: $scope.folderDescription
@@ -82,13 +82,30 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
 	
+	$scope.editFolderForm = ->
+		$scope.folderName = ''
+		$scope.folderDescription = ''
+		$scope.show = 'edit-folder'
+	
+	$scope.editFolder = ->
+		if $scope.folderName != ''
+			Folders.save {id: $scope.path[$scope.path.length - 1].id},				
+				name: $scope.folderName
+				description: $scope.folderDescription
+			, (result, response) ->
+				$scope.path[$scope.path.length - 1].name = $scope.folderName
+				$scope.path[$scope.path.length - 1].description = $scope.folderDescription
+				$scope.show = 'directory'
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
+	
 	$scope.createLessonForm = ->
-		$scope.lessonName = ""
-		$scope.lessonDescription = ""
+		$scope.lessonName = ''
+		$scope.lessonDescription = ''
 		$scope.show = 'create-lesson'
 	
 	$scope.createLesson = ->
-		if $scope.lessonName != ""
+		if $scope.lessonName != ''
 			Files.save {id: $scope.path[$scope.path.length - 1].id},				
 				name: $scope.lessonName
 				description: $scope.lessonDescription
@@ -155,8 +172,6 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			front: $scope.front
 			back: $scope.back
 		, (result, response) ->
-			$scope.front = ''
-			$scope.back = ''
 			open($scope.file)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
@@ -170,31 +185,32 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 				$scope.challengeIndex = 0
 			else
 				if done or $scope.challengeIndex == undefined
-					$scope.challengeIndex = randomInt( 0, $scope.lesson.pairs.length )
+					$scope.challengeIndex = random( $scope.lesson.pairs.length )
 				else
 					indices = (i for i in [0..$scope.lesson.pairs.length - 1])
 					indices.splice( $scope.challengeIndex, 1 )
-					$scope.challengeIndex = indices[randomInt(0, $scope.lesson.pairs.length - 1)]
+					$scope.challengeIndex = indices[random($scope.lesson.pairs.length - 1)]
 				
 			$scope.challenge = $scope.lesson.pairs[$scope.challengeIndex].front
 		
-	randomInt = (min, max) -> Math.floor(Math.random()*(max - min)) + min
+	random = (range) -> Math.floor( Math.random()*range )
 		
 	directory = (dir) ->
 		$scope.message = {type: 'none'}
 		$scope.file = undefined
-		$scope.show = 'directory'
 		Files.query {id: dir.id}, (result, response) ->
 			if result.length == 0
 				$scope.chunks = []
 			else
 				$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
+			$scope.show = 'directory'
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		
 	open = (file) ->
 		$scope.message = {type: 'none'}
-		$scope.show = 'file'
+		$scope.front = ''
+		$scope.back = ''
 		$scope.editingFront = undefined
 		$scope.editingBack = undefined
 		Lessons.get {id: file.id}, (result, response) ->
@@ -202,6 +218,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			challengeIndex = undefined
 			$scope.file = file
 			$scope.lessonData = result
+			$scope.show = 'file'
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		

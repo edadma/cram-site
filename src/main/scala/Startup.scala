@@ -22,6 +22,7 @@ object Startup {
 				Files.schema ++
 				Pairs.schema ++
 				Tallies.schema ++
+				Medias.schema ++
 				Visits.schema
 			).create
 		)))

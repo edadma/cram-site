@@ -175,6 +175,7 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 	
 	def * = (name, description, created, parentid, visible, contents, imageid, id.?) <> (File.apply _ tupled, File.unapply)
 	def parent_fk = foreignKey("files_parent_fk", parentid, Files)(_.id.?, onDelete=ForeignKeyAction.Cascade)
+	def image_fk = foreignKey("files_image_fk", imageid, Medias)(_.id.?, onDelete=ForeignKeyAction.Cascade)
 	def idx_files_name = index("idx_files_name", name)
 	def idx_files_name_parent = index("idx_files_name_parent", (name, parentid), unique = true )
 }
@@ -200,6 +201,8 @@ object Files extends TableQuery(new FilesTable(_)) {
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
 	}
+	
+	def update( id: Int, name: String, description: String ) = db.run( filter(_.id === id) map (f => (f.name, f.description)) update (name, description) )
 	
 	def list: Future[Seq[File]] = db.run(this.result)
 }
