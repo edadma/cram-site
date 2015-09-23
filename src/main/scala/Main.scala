@@ -135,10 +135,10 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.lessonsGet(fileid) ) } ~
 			(post & path("lessons"/IntNumber) & entity(as[PairJson]) & session) { (fileid, pair, _) =>
 				complete( API.lessonsPost(fileid, pair) ) } ~
-			(post & path("response") & entity(as[Response])) { r =>
-				complete( API.response(r) ) } ~
 			(get & path("tallies"/IntNumber/IntNumber)) { (fileid, userid) =>
 				complete( API.talliesGet(fileid, userid) ) } ~
+			(post & path("tallies"/IntNumber/IntNumber) & entity(as[TallyUpdate])) { (userid, pairid, update) =>
+				complete( API.talliesPost(userid, pairid, update) ) } ~
 			(post & path("folders") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
 				complete( API.foldersPostCreate(parentid, info) ) } ~
 			(post & path("folders"/IntNumber) & entity(as[FileInfo]) & session) { (id, info, _) =>

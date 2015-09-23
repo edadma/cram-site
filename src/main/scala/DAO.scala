@@ -107,20 +107,22 @@ case class Tally(
 	userid: Int,
 	pairid: Int,
 	fileid: Int,
-	correct: Int
+	foreward: Int,
+	backward: Int
 )
 
 object Tally {
-	implicit val pair = jsonFormat4(Tally.apply)
+	implicit val pair = jsonFormat5(Tally.apply)
 }
 
 class TalliesTable(tag: Tag) extends Table[Tally](tag, "tallies") {
 	def userid = column[Int]("userid")
 	def pairid = column[Int]("pairid")
 	def fileid = column[Int]("fileid")
-	def correct = column[Int]("correct")
+	def foreward = column[Int]("foreward")
+	def backward = column[Int]("backward")
 	
-	def * = (userid, pairid, fileid, correct) <> (Tally.apply _ tupled, Tally.unapply)
+	def * = (userid, pairid, fileid, foreward, backward) <> (Tally.apply _ tupled, Tally.unapply)
 	def pk = primaryKey("pk_tallies", (userid, pairid))
 	def idx_user = index("idx_tallies_user", userid)
 	def idx_file = index("idx_tallies_file", fileid)
@@ -137,13 +139,13 @@ object Tallies extends TableQuery(new TalliesTable(_)) {
 	def create(
 		userid: Int,
 		pairid: Int,
-		fileid: Int,
-		correct: Int
-		) = db.run( this += Tally(userid, pairid, fileid, correct) )
+		fileid: Int
+		) = db.run( this += Tally(userid, pairid, fileid, 0, 0) )
 
 	def delete( fileid: Int, userid: Int ): Future[Int] = db.run( filter(t => t.fileid === fileid && t.userid === userid).delete )
 	
-	def update( pairid: Int, userid: Int, correct: Int ) = db.run( filter(t => t.pairid === pairid && t.userid === userid) map (p => p.correct) update correct )
+	def update( userid: Int, pairid: Int, foreward: Int, backward: Int ) =
+		db.run( filter(t => t.pairid === pairid && t.userid === userid) map (p => (p.foreward, p.backward)) update (foreward, backward) )
 	
 	def list: Future[Seq[Tally]] = db.run(this.result)
 }

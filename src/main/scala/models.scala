@@ -38,15 +38,13 @@ object PairJson {
 	implicit val pairjson = jsonFormat2(PairJson.apply)
 }
 
-case class Response(
-	userid: Int,
-	pairid: Int,
-	fileid: Int,
-	correct: Boolean
+case class TallyUpdate(
+	foreward: Int,
+	backward: Int
 )
 
-object Response {
-	implicit val response = jsonFormat4( Response.apply )
+object TallyUpdate {
+	implicit val tallyUpdate = jsonFormat2( TallyUpdate.apply )
 }
 
 case class VisitJson(

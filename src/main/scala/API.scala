@@ -84,31 +84,16 @@ object API extends SessionDirectives {
 	
 	def pairsDelete( id: Int ) = Pairs.delete( id ) map (d => Map("deleted" -> d))
 	
-	def response( r: models.Response ) = {
-		var done = false
-		
-		Tallies.findByPairid( r.pairid, r.userid ) flatMap {
-			t => Tallies.update( r.pairid, r.userid,
-				(t.get.correct, r.correct) match {
-					case (c, false) if c <= 2 => 0
-					case (c, false) => c - 2
-					case (LIMIT, true) =>
-						done = true
-						LIMIT
-					case (c, true) =>
-						done = c + 1 == LIMIT
-						c + 1
-				})
-		} map {
-			ts => Map( "done" -> done )
+	def talliesPost( userid: Int, pairid: Int, update: models.TallyUpdate ) =
+		Tallies.update( pairid, userid, update.foreward, update.backward ) map {
+			u => Map( "updated" -> u )
 		}
-	}
 	
 	def talliesGet( fileid: Int, userid: Int ) = {
 		Tallies.delete( fileid, userid ) flatMap { _ =>
 			Pairs.find( fileid )
 		} flatMap {
-			ps => Future sequence (ps map (p => Tallies.create( userid, p.id.get, fileid, 0 )))
+			ps => Future sequence (ps map (p => Tallies.create( userid, p.id.get, fileid )))
 		} map (_ => Map[String, String]())
 	}
 	
