@@ -129,6 +129,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.filesPost(parentid, info) ) } ~
 			(post & path("pairs"/IntNumber) & entity(as[PairJson]) & session) { (id, pair, _) =>
 				complete( API.pairsPost(id, pair) ) } ~
+			(delete & path("pairs"/IntNumber) & session) { (id, _) =>
+				complete( API.pairsDelete(id) ) } ~
 			(get & path("lessons"/IntNumber)) { fileid =>
 				complete( API.lessonsGet(fileid) ) } ~
 			(post & path("lessons"/IntNumber) & entity(as[PairJson]) & session) { (fileid, pair, _) =>

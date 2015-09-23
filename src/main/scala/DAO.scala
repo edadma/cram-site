@@ -92,7 +92,9 @@ object Pairs extends TableQuery(new PairsTable(_)) {
 		back: String
 		) = db.run( this += Pair(fileid, front, back) )
 
-	def delete(fileid: Int): Future[Int] = {
+	def delete( id: Int ): Future[Int] = db.run( filter (_.id === id) delete )
+
+	def deleteByFileid(fileid: Int): Future[Int] = {
 		db.run(filter(_.fileid === fileid).delete)
 	}
 	

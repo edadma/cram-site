@@ -80,6 +80,8 @@ object API extends SessionDirectives {
 		Pairs.update( id, pair.front, pair.back ) map (u => Map("updated" -> u))
 	}
 	
+	def pairsDelete( id: Int ) = Pairs.delete( id ) map (d => Map("deleted" -> d))
+	
 	def response( r: models.Response ) = {
 		var done = false
 		

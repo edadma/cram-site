@@ -145,7 +145,10 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		$scope.editingFront = undefined
 	
 	$scope.remove = (index) ->
-		console.log index
+		Pairs.delete {id: $scope.lessonData.pairs[index].id}, (result, response) ->
+			open($scope.file)
+		,	(response) ->
+			$scope.message = {type: 'error', text: response.data}
 	
 	$scope.add = ->
 		Lessons.save {id: $scope.file.id}
