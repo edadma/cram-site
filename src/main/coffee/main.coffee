@@ -148,7 +148,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		if done
 			if $scope.lesson.pairs.length == 1
 				$scope.complete = true
-				$scope.message = {type: 'success', text: 'You finished!'}
+				$scope.message = {type: 'success', text: 'You finished the lesson!'}
 				
 		$scope.response = ''
 		Tallies.save
