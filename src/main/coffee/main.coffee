@@ -122,7 +122,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			$scope.start = true
 			$scope.complete = false
 			$scope.challengeIndex = undefined
-			$scope.lesson = angular.copy( $scope.lessonData )
+			$scope.lesson = angular.copy $scope.lessonData
 			$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [1..$scope.lesson.pairs.length])
 			$scope.message = {type: 'none'}
 			challenge()

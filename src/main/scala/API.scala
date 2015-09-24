@@ -61,7 +61,13 @@ object API extends SessionDirectives {
 	
 	def filesUnder( parentid: Int ) = Files.findUnder( parentid )
 	
-	def lessonsGet( fileid: Int ) = Pairs.find( fileid ) map {s => Map("pairs" -> s)}
+	def lessonsGet( fileid: Int ) = {
+		Files.find( fileid ) flatMap { f =>
+			Pairs.find( fileid ) map { ps =>
+				Map("pairs" -> ps)
+			}
+		}
+	}
 	
 	def lessonsPost( fileid: Int, pair: models.PairJson ) = {
 		Pairs.create( fileid, pair.front, pair.back ) map (id => Map("id" -> id))

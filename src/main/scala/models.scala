@@ -8,6 +8,8 @@ import spray.httpx.unmarshalling.MalformedContent
 
 import org.joda.time.Instant
 
+import xyz.hyperreal.cramsite.dao.Pair
+
 
 case class UserJson(
 	name: String,
@@ -27,6 +29,15 @@ case class FileInfo(
 
 object FileInfo {
 	implicit val fileInfo = jsonFormat2( FileInfo.apply )
+}
+
+case class Lesson(
+	info: String,
+	pairs: Seq[Pair]
+)
+
+object Lesson {
+	implicit val lesson = jsonFormat2( Lesson.apply )
 }
 
 case class PairJson(
