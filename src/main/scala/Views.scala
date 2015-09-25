@@ -65,8 +65,8 @@ object Views {
 				
 				<div class="breadcrumb">
 					<ol class="container breadcrumb">
-						<li><a ng-click="selectHome()">Home</a></li>
-						<li ng-repeat="e in path"><a ng-click="selectElement($index)">{xml.Unparsed("{{e.name + ($last ? '' : '\u00A0')}}")}</a></li>
+						<li><a class="clickable" ng-click="selectHome()">Home</a></li>
+						<li ng-repeat="e in path"><a class="clickable" ng-click="selectElement($index)">{xml.Unparsed("{{e.name + ($last ? '' : '\u00A0')}}")}</a></li>
 						<li class="active">{"{{file.name}}"}</li>
 					</ol>
 				</div>
@@ -183,11 +183,11 @@ object Views {
 					<div ng-show="show == 'directory'">
 						<div class="row" ng-repeat="chunk in chunks">
 							<div class="col-md-2" ng-repeat="file in chunk">
-								<a class="thumbnail" ng-click="selectFile(file)">
+								<a class="btn thumbnail" ng-click="selectFile(file)">
 									<img class="img-rounded"/>
 									<div class="caption">
 										<h4>{"{{file.name}}"}</h4>
-										<p>{"{{file.description}}"}</p>
+										<p class="text-left text-wrap">{"{{file.description}}"}</p>
 									</div>
 								</a>
 							</div>
