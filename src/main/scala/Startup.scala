@@ -44,7 +44,7 @@ object Startup {
 					users =>
 						Files.create( "Bob", "Bob's folder", users.id, true, None, None ) map {
 							bob =>
-								Files.create( "French 101", "French vocabulary", bob.id, true, Some("{direction:bi}"), None ) map {
+								Files.create( "French 101", "French vocabulary", bob.id, true, Some("""{"direction": "duplex"}"""), None ) map {
 									french101 =>
 										Pairs.create( french101.id.get, "one", "un" )
 										Pairs.create( french101.id.get, "two", "deux" )

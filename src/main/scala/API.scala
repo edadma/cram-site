@@ -64,7 +64,7 @@ object API extends SessionDirectives {
 	def lessonsGet( fileid: Int ) = {
 		Files.find( fileid ) flatMap { f =>
 			Pairs.find( fileid ) map { ps =>
-				Map("pairs" -> ps)
+				models.Lesson( f.get.contents.get.parseJson, ps )
 			}
 		}
 	}
@@ -76,7 +76,7 @@ object API extends SessionDirectives {
 	def filesPost( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
-				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("{direction:bi}"), None) map {
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("""{"direction": "duplex"}"""), None) map {
 					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>

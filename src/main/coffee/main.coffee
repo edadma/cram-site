@@ -17,7 +17,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Lessons = $resource '/api/v1/lessons/:id'
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
-	LIMIT = 3
+	LIMIT = 1
 	
 	home = ->
 		$scope.show = 'directory'
@@ -115,35 +115,49 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 				$scope.message = {type: 'error', text: response.data}
 			
 	$scope.startCramming = ->
+		$scope.start = true
+		$scope.complete = false
+		$scope.challengeIndex = undefined
+		$scope.message = {type: 'none'}
+		$scope.lesson = angular.copy $scope.lessonData
+		$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [0..$scope.lesson.pairs.length - 1])
+		challenge()
 		Tallies.get
 			id1: $scope.file.id
 			id2: $scope.user.id
 		, (result, response) ->
-			$scope.start = true
-			$scope.complete = false
-			$scope.challengeIndex = undefined
-			$scope.lesson = angular.copy $scope.lessonData
-			$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [1..$scope.lesson.pairs.length])
-			$scope.message = {type: 'none'}
-			challenge()
+			null
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
 	
 	$scope.respond = ->
-		correct = $scope.response == $scope.lesson.pairs[$scope.challengeIndex].back
-		
-		$scope.lesson.tallies[$scope.challengeIndex].foreward +=
-			if correct
+		standard = if $scope.side == 'front' then $scope.lesson.pairs[$scope.challengeIndex].back else $scope.lesson.pairs[$scope.challengeIndex].front
+		change =
+			if $scope.response == standard
 				$scope.message = {type: 'success', text: 'Right!'}
 				1
 			else
-				$scope.message = {type: 'error', text: 'Wrong: "' + $scope.lesson.pairs[$scope.challengeIndex].back + '"'}
+				$scope.message = {type: 'error', text: 'Wrong: "' + standard + '"'}
 				-2
+
+		console.log [standard, $scope.lesson.tallies[$scope.challengeIndex].foreward, $scope.lesson.tallies[$scope.challengeIndex].backward]
 		
+		if $scope.side == 'front'
+			$scope.lesson.tallies[$scope.challengeIndex].foreward += change
+		else
+			$scope.lesson.tallies[$scope.challengeIndex].backward += change
+
+		console.log [standard, $scope.lesson.tallies[$scope.challengeIndex].foreward, $scope.lesson.tallies[$scope.challengeIndex].backward]
+	
 		if $scope.lesson.tallies[$scope.challengeIndex].foreward < 0
 			$scope.lesson.tallies[$scope.challengeIndex].foreward = 0
+			
+		if $scope.lesson.tallies[$scope.challengeIndex].backward < 0
+			$scope.lesson.tallies[$scope.challengeIndex].backward = 0
 		
-		done = $scope.lesson.tallies[$scope.challengeIndex].foreward >= LIMIT
+		done =
+			$scope.lesson.tallies[$scope.challengeIndex].foreward >= LIMIT and
+				(if $scope.lesson.info.direction == 'simplex' then true else ($scope.lesson.tallies[$scope.challengeIndex].backward >= LIMIT))
 		
 		if done
 			if $scope.lesson.pairs.length == 1
@@ -192,6 +206,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 		if !$scope.complete
 			if done
 				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
+				$scope.lesson.tallies.splice( $scope.challengeIndex, 1 )
 
 			if $scope.lesson.pairs.length == 1
 				$scope.challengeIndex = 0
@@ -201,9 +216,14 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 				else
 					indices = (i for i in [0..$scope.lesson.pairs.length - 1])
 					indices.splice( $scope.challengeIndex, 1 )
-					$scope.challengeIndex = indices[random($scope.lesson.pairs.length - 1)]
+					$scope.challengeIndex = indices[random( $scope.lesson.pairs.length - 1 )]
 				
-			$scope.challenge = $scope.lesson.pairs[$scope.challengeIndex].front
+			if $scope.lesson.info.direction == 'duplex'
+				$scope.side = if random( 2 ) == 0 then 'front' else 'back'
+			else
+				$scope.side = 'front'
+				
+			$scope.challenge = if $scope.side == 'front' then $scope.lesson.pairs[$scope.challengeIndex].front else $scope.lesson.pairs[$scope.challengeIndex].back
 		
 	random = (range) -> Math.floor( Math.random()*range )
 		

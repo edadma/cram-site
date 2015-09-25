@@ -91,7 +91,7 @@ object Views {
 								<div class="col-md-6">
 									<form ng-submit="respond()">
 										<div class="form-group">
-											<label>Challenge:</label>
+											<label>Challenge ({"{{side}}"}):</label>
 											<p>{"{{challenge}}"}</p>
 										</div>
 										<div class="form-group">

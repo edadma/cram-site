@@ -32,7 +32,7 @@ object FileInfo {
 }
 
 case class Lesson(
-	info: String,
+	info: JsValue,
 	pairs: Seq[Pair]
 )
 
