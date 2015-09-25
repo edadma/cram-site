@@ -17,7 +17,7 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	Lessons = $resource '/api/v1/lessons/:id'
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
-	LIMIT = 1
+	LIMIT = 3
 	
 	home = ->
 		$scope.show = 'directory'
@@ -139,15 +139,11 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 			else
 				$scope.message = {type: 'error', text: 'Wrong: "' + standard + '"'}
 				-2
-
-		console.log [standard, $scope.lesson.tallies[$scope.challengeIndex].foreward, $scope.lesson.tallies[$scope.challengeIndex].backward]
 		
 		if $scope.side == 'front'
 			$scope.lesson.tallies[$scope.challengeIndex].foreward += change
 		else
 			$scope.lesson.tallies[$scope.challengeIndex].backward += change
-
-		console.log [standard, $scope.lesson.tallies[$scope.challengeIndex].foreward, $scope.lesson.tallies[$scope.challengeIndex].backward]
 	
 		if $scope.lesson.tallies[$scope.challengeIndex].foreward < 0
 			$scope.lesson.tallies[$scope.challengeIndex].foreward = 0
