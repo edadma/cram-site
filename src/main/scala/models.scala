@@ -31,6 +31,14 @@ object FileInfo {
 	implicit val fileInfo = jsonFormat2( FileInfo.apply )
 }
 
+case class FileContent(
+	content: String
+)
+
+object FileContent {
+	implicit val fileContent = jsonFormat1( FileContent.apply )
+}
+
 case class Lesson(
 	info: JsValue,
 	pairs: Seq[Pair]

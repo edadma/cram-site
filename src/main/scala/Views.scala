@@ -79,6 +79,7 @@ object Views {
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
 						<button ng-show="showModifyFolder()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
+						<button ng-show="showModifyFolder()" ng-click="inputLessonForm()" class="btn btn-primary navbar-btn">Input Lesson</button>
 						<!-- <button ng-show="showModifyFolder()" ng-click="uploadLessonForm()" class="btn btn-primary navbar-btn">Upload Lesson</button> -->
 						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
 						<button ng-show="showModifyFolder()" ng-click="editFolderForm()" class="btn btn-default navbar-btn">Edit Topic</button>
@@ -177,6 +178,15 @@ object Views {
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" ng-model="lessonDescription" placeholder="Enter lesson description"/>
+							</div>
+							<button type="submit" class="btn btn-default">Submit</button>
+						</form>
+					</div>
+					
+					<div ng-show="show == 'input-lesson'">
+						<form ng-submit="inputLesson()">
+							<div class="form-group">
+								<textarea class="form-control" rows="4" cols="50" ng-model="lessonData" placeholder="Enter lesson data"></textarea>
 							</div>
 							<button type="submit" class="btn btn-default">Submit</button>
 						</form>

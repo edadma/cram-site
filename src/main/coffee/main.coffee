@@ -114,6 +114,19 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
 	
+	$scope.inputLessonForm = ->
+		$scope.lessonData = ''
+		$scope.show = 'input-lesson'
+	
+	$scope.inputLesson = ->
+		if $scope.lessonName != ''
+			Files.save {parentid: $scope.path[$scope.path.length - 1].id, content: true},				
+				content: $scope.lessonData
+			, (result, response) ->
+				open(result)
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
+	
 	$scope.editLessonForm = ->
 		$scope.fileName = ''
 		$scope.fileDescription = ''

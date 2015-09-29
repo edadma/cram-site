@@ -98,6 +98,36 @@ object API extends SessionDirectives {
 		}
 	}
 	
+	def filesPostCreate( parentid: Int, file: models.FileContent ) = {
+		val src = io.Source.fromString( file.content ).getLines.toList
+		
+		if (src.length < 4)
+			Future {badRequest("File contents should comprise at least three lines of text.")}
+		else if (src.head.trim == "")
+			Future {badRequest("File name is empty.")}
+		else {
+			val cards = src drop 3 map (_ split "::")
+			
+			if (cards exists (_.length != 2))
+				Future {badRequest("Each flashcard should have a '::' separating front and back.")}
+			else {
+				val filename = src.head.trim
+				
+				Files.find( parentid, filename ) flatMap {
+					case None =>
+						Files.create( filename, src.drop(1).head.trim, Some(parentid), true, Some(src.drop(2).head.trim), None ) flatMap {
+							f =>
+								Future.sequence( cards map {case Array(front, back) => Pairs.create(f.id.get, front.trim, back.trim)} ) map { _ =>
+									ok( f.toJson.compactPrint )
+								}
+						}
+					case Some(_) =>
+						Future {conflict(s"'$filename' already exists")}
+				}
+			}
+		}
+	}
+	
 	def pairsPost( id: Int, pair: models.PairJson ) = {
 		Pairs.update( id, pair.front, pair.back ) map (u => Map("updated" -> u))
 	}

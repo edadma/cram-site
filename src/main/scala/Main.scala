@@ -125,6 +125,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.filesUnderRoot ) } ~
 			(get & path("files"/IntNumber)) { id =>
 				complete( API.filesUnder(id) ) } ~
+			(post & path("files") & parameters("parentid".as[Int], "content".as[Boolean]) & entity(as[FileContent]) & session) { (parentid, _, content, _) =>
+				complete( API.filesPostCreate(parentid, content) ) } ~
 			(post & path("files") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
 				complete( API.filesPostCreate(parentid, info) ) } ~
 			(post & path("files"/IntNumber) & entity(as[FileInfo]) & session) { (id, info, _) =>

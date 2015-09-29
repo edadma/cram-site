@@ -39,4 +39,6 @@ package object cramsite {
 	def ok( message: String = "" ) = HttpResponse( status = StatusCodes.OK, message )
 	
 	def conflict( message: String ) = HttpResponse( status = StatusCodes.Conflict, message )
+	
+	def badRequest( message: String ) = HttpResponse( status = StatusCodes.BadRequest, message )
 }
