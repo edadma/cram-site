@@ -39,7 +39,7 @@ libraryDependencies ++= Seq(
 	"org.webjars" % "bootstrap" % "3.3.5",
 //	"org.webjars" % "font-awesome" % "4.2.0",
 	"org.webjars" % "angularjs" % "1.4.4",
-	"org.webjars" % "nervgh-angular-file-upload" % "1.1.5-1"
+	"org.webjars" % "nervgh-angular-file-upload" % "2.1.1"
 	)
 
 libraryDependencies ++= Seq(

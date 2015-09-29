@@ -47,6 +47,7 @@ object Views {
 				<link href="/sass/main.css" rel="stylesheet"/>
 				<script src={s"/webjars/angularjs/$ANGULARJS/angular.min.js"}></script>
 				<script src={s"/webjars/angularjs/$ANGULARJS/angular-resource.min.js"}></script>
+				<script src="/webjars/nervgh-angular-file-upload/2.1.1/angular-file-upload.min.js"></script>
 				<script src="/coffee/main.js"></script>
 			</xml:group>
 		} {
@@ -74,10 +75,11 @@ object Views {
 				<nav class="navbar navbar-default">
 					<div class="container">
 						<button ng-show={"file && !start && lessonData.pairs.length > 0"} ng-click="startCramming()" class="btn btn-success navbar-btn">Start Cramming!</button>
-						<button ng-show={"file && !start"} class="btn btn-default navbar-btn">Edit</button>
+						<button ng-show={"file && !start"} ng-click="editLessonForm()" class="btn btn-default navbar-btn">Edit Lesson</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
 						<button ng-show="showModifyFolder()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
+						<!-- <button ng-show="showModifyFolder()" ng-click="uploadLessonForm()" class="btn btn-primary navbar-btn">Upload Lesson</button> -->
 						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
 						<button ng-show="showModifyFolder()" ng-click="editFolderForm()" class="btn btn-default navbar-btn">Edit Topic</button>
 					</div>
@@ -147,10 +149,10 @@ object Views {
 					<div ng-show="show == 'create-folder'">
 						<form ng-submit="createFolder()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderName" placeholder="Topic name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="fileName" placeholder="Topic name" autofocus=""/>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderDescription" placeholder="Topic description"/>
+								<input type="text" class="form-control" ng-model="fileDescription" placeholder="Topic description"/>
 							</div>
 							<button type="submit" class="btn btn-default">Submit</button>
 						</form>
@@ -159,10 +161,10 @@ object Views {
 					<div ng-show="show == 'edit-folder'">
 						<form ng-submit="editFolder()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderName" placeholder="New Topic name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="fileName" placeholder="New Topic name" autofocus=""/>
 							</div>
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="folderDescription" placeholder="New Topic description"/>
+								<input type="text" class="form-control" ng-model="fileDescription" placeholder="New Topic description"/>
 							</div>
 							<button type="submit" class="btn btn-default">Submit</button>
 						</form>
@@ -180,13 +182,34 @@ object Views {
 						</form>
 					</div>
 					
+					<div ng-show="show == 'edit-lesson'">
+						<form ng-submit="editLesson()" class="form-inline">
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="fileName" placeholder="New Topic name" autofocus=""/>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" ng-model="fileDescription" placeholder="New Topic description"/>
+							</div>
+							<button type="submit" class="btn btn-default">Submit</button>
+						</form>
+					</div>
+					
+					<!-- <div ng-show="show == 'upload-lesson'">
+						<div ng-controller="uploadFormController">
+							<input type="file" nv-file-select="" uploader="uploader"/>
+							<div ng-repeat="item in uploader.queue">
+								<button ng-disabled="uploaded" ng-click="item.upload()">upload</button>
+							</div>
+						</div>
+					</div> -->
+					
 					<div ng-show="show == 'directory'">
 						<div class="row" ng-repeat="chunk in chunks">
 							<div class="col-md-2" ng-repeat="file in chunk">
 								<a class="btn thumbnail" ng-click="selectFile(file)">
 									<img class="img-rounded"/>
 									<div class="caption">
-										<h4>{"{{file.name}}"}</h4>
+										<h4 class="text-wrap">{"{{file.name}}"}</h4>
 										<p class="text-left text-wrap">{"{{file.description}}"}</p>
 									</div>
 								</a>

@@ -125,8 +125,10 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.filesUnderRoot ) } ~
 			(get & path("files"/IntNumber)) { id =>
 				complete( API.filesUnder(id) ) } ~
-			(post & path("files"/IntNumber) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
-				complete( API.filesPost(parentid, info) ) } ~
+			(post & path("files") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
+				complete( API.filesPostCreate(parentid, info) ) } ~
+			(post & path("files"/IntNumber) & entity(as[FileInfo]) & session) { (id, info, _) =>
+				complete( API.filesPost(id, info) ) } ~
 			(post & path("pairs"/IntNumber) & entity(as[PairJson]) & session) { (id, pair, _) =>
 				complete( API.pairsPost(id, pair) ) } ~
 			(delete & path("pairs"/IntNumber) & session) { (id, _) =>
@@ -141,8 +143,6 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.talliesPost(userid, pairid, update) ) } ~
 			(post & path("folders") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
 				complete( API.foldersPostCreate(parentid, info) ) } ~
-			(post & path("folders"/IntNumber) & entity(as[FileInfo]) & session) { (id, info, _) =>
-				complete( API.foldersPost(id, info) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {

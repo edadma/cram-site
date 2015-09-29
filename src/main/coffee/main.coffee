@@ -1,4 +1,4 @@
-app = angular.module 'cramsite', ['ngResource']
+app = angular.module 'cramsite', ['ngResource', 'angularFileUpload']
 
 app.controller 'LessonEditFormController', ['$scope', '$resource', ($scope, $resource) ->
 	
@@ -7,7 +7,7 @@ app.controller 'LessonEditFormController', ['$scope', '$resource', ($scope, $res
 		
 	]
 
-app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
+app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope, $resource, FileUploader) ->
 	$scope.message = {type: 'none'}
 	$scope.path = []
 	$scope.file = undefined
@@ -68,33 +68,33 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	$scope.showModifyFolder = -> $scope.path.length > 1 and $scope.path[0].name == 'Topics' and not $scope.file
 	
 	$scope.createFolderForm = ->
-		$scope.folderName = ''
-		$scope.folderDescription = ''
+		$scope.fileName = ''
+		$scope.fileDescription = ''
 		$scope.show = 'create-folder'
 	
 	$scope.createFolder = ->
-		if $scope.folderName != ''
+		if $scope.fileName != ''
 			Folders.save {parentid: $scope.path[$scope.path.length - 1].id},				
-				name: $scope.folderName
-				description: $scope.folderDescription
+				name: $scope.fileName
+				description: $scope.fileDescription
 			, (result, response) ->
 				enter(result)
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
 	
 	$scope.editFolderForm = ->
-		$scope.folderName = ''
-		$scope.folderDescription = ''
+		$scope.fileName = ''
+		$scope.fileDescription = ''
 		$scope.show = 'edit-folder'
 	
 	$scope.editFolder = ->
-		if $scope.folderName != ''
-			Folders.save {id: $scope.path[$scope.path.length - 1].id},				
-				name: $scope.folderName
-				description: $scope.folderDescription
+		if $scope.fileName != ''
+			Files.save {id: $scope.path[$scope.path.length - 1].id},
+				name: $scope.fileName
+				description: $scope.fileDescription
 			, (result, response) ->
-				$scope.path[$scope.path.length - 1].name = $scope.folderName
-				$scope.path[$scope.path.length - 1].description = $scope.folderDescription
+				$scope.path[$scope.path.length - 1].name = $scope.fileName
+				$scope.path[$scope.path.length - 1].description = $scope.fileDescription
 				$scope.show = 'directory'
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
@@ -106,11 +106,28 @@ app.controller 'MainController', ['$scope', '$resource', ($scope, $resource) ->
 	
 	$scope.createLesson = ->
 		if $scope.lessonName != ''
-			Files.save {id: $scope.path[$scope.path.length - 1].id},				
+			Files.save {parentid: $scope.path[$scope.path.length - 1].id},				
 				name: $scope.lessonName
 				description: $scope.lessonDescription
 			, (result, response) ->
 				open(result)
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
+	
+	$scope.editLessonForm = ->
+		$scope.fileName = ''
+		$scope.fileDescription = ''
+		$scope.show = 'edit-lesson'
+	
+	$scope.editLesson = ->
+		if $scope.fileName != ''
+			Files.save {id: $scope.file.id},				
+				name: $scope.fileName
+				description: $scope.fileDescription
+			, (result, response) ->
+				$scope.file.name = $scope.fileName
+				$scope.file.description = $scope.fileDescription
+				$scope.show = 'file'
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
 			

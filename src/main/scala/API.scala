@@ -61,6 +61,20 @@ object API extends SessionDirectives {
 	
 	def filesUnder( parentid: Int ) = Files.findUnder( parentid )
 	
+	def filesPost( id: Int, info: models.FileInfo ) = {
+		Files.find( id ) flatMap {
+			file =>
+				Files.find( file.get.parentid.get, info.name ) flatMap {
+					case None =>
+						Files.update(id, info.name, info.description.getOrElse("")) map {
+							u => ok( Map("updated" -> u).toJson.compactPrint )
+						}
+					case Some(_) =>
+						Future {conflict(s"'${info.name}' already exists")}
+				}
+		}
+	}
+	
 	def lessonsGet( fileid: Int ) = {
 		Files.find( fileid ) flatMap { f =>
 			Pairs.find( fileid ) map { ps =>
@@ -73,7 +87,7 @@ object API extends SessionDirectives {
 		Pairs.create( fileid, pair.front, pair.back ) map (id => Map("id" -> id))
 	}
 	
-	def filesPost( parentid: Int, info: models.FileInfo ) = {
+	def filesPostCreate( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
 				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("""{"direction": "duplex"}"""), None) map {
@@ -111,20 +125,6 @@ object API extends SessionDirectives {
 				}
 			case Some(_) =>
 				Future {conflict(s"'${info.name}' already exists")}
-		}
-	}
-	
-	def foldersPost( id: Int, info: models.FileInfo ) = {
-		Files.find( id ) flatMap {
-			file =>
-				Files.find( file.get.parentid.get, info.name ) flatMap {
-					case None =>
-						Files.update(id, info.name, info.description.getOrElse("")) map {
-							u => ok( Map("updated" -> u).toJson.compactPrint )
-						}
-					case Some(_) =>
-						Future {conflict(s"'${info.name}' already exists")}
-				}
 		}
 	}
 }
