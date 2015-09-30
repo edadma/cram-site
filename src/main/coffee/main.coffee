@@ -18,6 +18,10 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
 	LIMIT = 3
+	$scope.inputDisabled = false
+	
+	$scope.setInputDisabled = (v) ->
+		$scope.inputDisabled = v
 	
 	home = ->
 		$scope.show = 'directory'
@@ -148,6 +152,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.start = true
 		$scope.complete = false
 		$scope.challengeIndex = undefined
+		$scope.setInputDisabled( false )
+		$scope.correct = true
 		$scope.message = {type: 'none'}
 		$scope.lesson = angular.copy $scope.lessonData
 		$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [0..$scope.lesson.pairs.length - 1])
@@ -162,8 +168,9 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	
 	$scope.respond = ->
 		standard = if $scope.side == 'front' then $scope.lesson.pairs[$scope.challengeIndex].back else $scope.lesson.pairs[$scope.challengeIndex].front
+		$scope.correct = $scope.response == standard
 		change =
-			if $scope.response == standard
+			if $scope.correct
 				$scope.message = {type: 'success', text: 'Right!'}
 				1
 			else
@@ -181,16 +188,15 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		if $scope.lesson.tallies[$scope.challengeIndex].backward < 0
 			$scope.lesson.tallies[$scope.challengeIndex].backward = 0
 		
-		done =
+		$scope.done =
 			$scope.lesson.tallies[$scope.challengeIndex].foreward >= LIMIT and
 				(if $scope.lesson.info.direction == 'simplex' then true else ($scope.lesson.tallies[$scope.challengeIndex].backward >= LIMIT))
 		
-		if done
+		if $scope.done
 			if $scope.lesson.pairs.length == 1
 				$scope.complete = true
 				$scope.message = {type: 'success', text: 'You finished the lesson!'}
 				
-		$scope.response = ''
 		Tallies.save
 			id1: $scope.user.id
 			id2: $scope.lesson.pairs[$scope.challengeIndex].id
@@ -201,7 +207,17 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			null
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
-		challenge( done )
+			
+		if $scope.correct
+			challenge( $scope.done )
+		else
+			$scope.setInputDisabled( true )
+	
+	$scope.key = (ev) ->
+		if not $scope.correct
+			$scope.correct = true
+			$scope.setInputDisabled( false )
+			challenge( $scope.done )
 	
 	$scope.editFront = (index) ->
 		$scope.value = $scope.lessonData.pairs[index].front
@@ -229,6 +245,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			$scope.message = {type: 'error', text: response.data}
 		
 	challenge = (done) ->
+		$scope.message = {type: 'none'}
+		$scope.response = ''
 		if !$scope.complete
 			if done
 				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )

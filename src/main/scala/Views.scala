@@ -88,7 +88,7 @@ object Views {
 				
 				<div class="main container">
 					
-					<div ng-show="show == 'file'">
+					<div ng-show="show == 'file'" ng-keypress="key($event)">
 						<div class="row">
 							<div ng-show={"start && !complete"}>
 								<div class="col-md-6">
@@ -99,7 +99,8 @@ object Views {
 										</div>
 										<div class="form-group">
 											<label>Response:</label>
-											<input type="text" class="form-control" ng-model="response" placeholder="Enter your answer" autofocus=""/>
+											<input ng-hide="inputDisabled" type="text" class="form-control" ng-model="response" placeholder="Enter your answer" autofocus=""/>
+											<div ng-show="inputDisabled" class="well well-sm">{"You typed: {{response}}"}</div>
 										</div>
 										<div class="form-group">
 											<input type="submit" class="btn btn-primary"/>
