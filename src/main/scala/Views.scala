@@ -12,7 +12,7 @@ import models._
 
 
 object Views {
-	val ANGULARJS = "1.4.4"
+	val ANGULARJS = "1.4.6"
 	
   val conf = ConfigFactory.load
 
@@ -49,6 +49,7 @@ object Views {
 				<script src={s"/webjars/angularjs/$ANGULARJS/angular-resource.min.js"}></script>
 				<script src="/webjars/nervgh-angular-file-upload/2.1.1/angular-file-upload.min.js"></script>
 				<script src="/coffee/main.js"></script>
+				<script src="/js/ng-target.js"></script>
 			</xml:group>
 		} {
 			<div ng-app="cramsite" ng-controller="MainController" ng-init={"user = {id: " + user.id.get + ", name: " + user.name + ", status: " + user.status + "}"} ng-cloak="">
@@ -88,9 +89,9 @@ object Views {
 				
 				<div class="main container">
 					
-					<div ng-show="show == 'file'" ng-keypress="key($event)">
+					<div ng-show="show == 'file'">
 						<div class="row">
-							<div ng-show={"start && !complete"}>
+							<div ng-show={"start && !complete"} ng-keypress="next()">
 								<div class="col-md-6">
 									<form ng-submit="respond()">
 										<div class="form-group">
@@ -99,18 +100,19 @@ object Views {
 										</div>
 										<div class="form-group">
 											<label>Response:</label>
-											<input ng-hide="inputDisabled" type="text" class="form-control" ng-model="response" placeholder="Enter your answer" autofocus=""/>
+											<input ng-hide="inputDisabled" type="text" class="form-control" ng-model="response" placeholder="Enter your answer" ng-target="responseInputTarget"/>
 											<div ng-show="inputDisabled" class="well well-sm">{"You typed: {{response}}"}</div>
 										</div>
 										<div class="form-group">
-											<input type="submit" class="btn btn-primary"/>
+											<input ng-hide="inputDisabled" type="submit" class="btn btn-primary"/>
+											<button ng-show="inputDisabled" class="btn btn-primary" ng-target="responseButtonTarget">Continue</button> <!-- ng-click="next()" -->
 										</div>
 									</form>
 								</div>
 							</div>
 							
 							<div ng-hide="start">
-								<div class="col-md-10">
+								<div class="col-md-12">
 									<div class="panel panel-default">
 										<div class="panel-heading">{"{{file.name}}"}</div>
 										<div class="panel-body"><p>{"{{file.description}}"}</p></div>

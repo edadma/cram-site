@@ -1,10 +1,8 @@
 app = angular.module 'cramsite', ['ngResource', 'angularFileUpload']
 
 app.controller 'LessonEditFormController', ['$scope', '$resource', ($scope, $resource) ->
-	
 	$scope.clear = ->
 		delete $scope.value
-		
 	]
 
 app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope, $resource, FileUploader) ->
@@ -19,6 +17,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	Folders = $resource '/api/v1/folders/:id'
 	LIMIT = 3
 	$scope.inputDisabled = false
+	$scope.responseInputTarget = {}
+	$scope.responseButtonTarget = {}
 	
 	$scope.setInputDisabled = (v) ->
 		$scope.inputDisabled = v
@@ -212,11 +212,13 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			challenge( $scope.done )
 		else
 			$scope.setInputDisabled( true )
+			$scope.responseButtonTarget.focus()
 	
-	$scope.key = (ev) ->
+	$scope.next = ->
 		if not $scope.correct
 			$scope.correct = true
 			$scope.setInputDisabled( false )
+			console.log $scope.inputDisabled
 			challenge( $scope.done )
 	
 	$scope.editFront = (index) ->
@@ -247,6 +249,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	challenge = (done) ->
 		$scope.message = {type: 'none'}
 		$scope.response = ''
+		$scope.responseInputTarget.focus()
 		if !$scope.complete
 			if done
 				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
