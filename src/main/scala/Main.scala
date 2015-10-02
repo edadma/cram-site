@@ -109,8 +109,12 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 					complete( Application.login ) } ~
 			(post & formFields( 'email, 'password, 'rememberme ? "no" )) {
 				(email, password, rememberme) => Application.authenticate( email, password ) } } ~
-// 		(get & path( "register" ) & blog) {
-// 			_ => complete( Application.register ) } ~
+		(get & path( "register" ) & user) {
+			u =>
+				if (u.status != GUEST)
+					redirect( "/", StatusCodes.SeeOther )
+				else
+					complete( Application.register ) } ~
 // 		(get & path( "admin" ) & admin) {
 // 			(b, _) => complete( Views.admin(b) ) } ~
 // 		(post & path( "post" ) & admin & formFields( 'category.as[Int], 'headline, 'text )) {

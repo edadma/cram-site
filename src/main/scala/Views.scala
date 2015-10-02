@@ -275,7 +275,7 @@ object Views {
 			</xml:group>
 		} {
 			<div class="container" ng-app="register" ng-controller="RegisterController">
-				<form class="form-register" ng-submit={if (role == None) "submit()" else s"submit({blogid: ${role.get._1}, role: '${role.get._2}'}, '${role.get._3}')"}>
+				<form class="form-register" ng-submit="submit()">
 					<h2 class="form-register-heading">Registration</h2>
 					<div class="form-group">
 						<input type="text" class="form-control" ng-model="user.name" placeholder="Name*" required="" autofocus=""/></div>
@@ -284,16 +284,9 @@ object Views {
 					<div class="form-group">
 						<input type="password" class="form-control" ng-model="user.password" placeholder="Password*" required=""/></div>
 					<div class="form-group">
-						<input type="url" class="form-control" ng-model="user.url" placeholder="URL"/></div>
-					<div class="form-group">
-						<textarea class="form-control" rows="4" cols="50" ng-model="user.bio" placeholder="Bio"></textarea></div>
+						<textarea class="form-control" rows="4" cols="50" ng-model="user.description" placeholder="Description"></textarea></div>
 					<div class="form-group"> {
-						if (role == None)
-							<button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
-						else {
-							<button ng-hide="message.type == 'success'" type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
-							<a ng-show="message.type == 'success'" class="btn btn-lg btn-success btn-block" ng-href={s"http://{{'${role.get._4}'}}"}>Check it out!</a>
-						}
+						<button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
 					}</div>
 					<div><ng-include src="'/message.html'"></ng-include></div>
 				</form>
