@@ -31,7 +31,7 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 
   val conf = ConfigFactory.load
 
-  startServer( "localhost", 8080 ) {
+  startServer( "localhost", 8082 ) {
 	
 // 		def blog: Directive[dao.Blog :: HNil] = hostName hflatMap {
 // 			case h :: HNil =>
@@ -101,14 +101,14 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		//hostName {h => complete(h)} ~
 		(get & pathSingleSlash & user) {
 			u => complete( Application.index(u) ) } ~
-// 		path( "login" ) {
-// 			(get & user) { u =>
-// 				if (u != None)
-// 					redirect( "/", StatusCodes.SeeOther )
-// 				else
-// 					complete( Application.login ) } ~
-// 			(post & formFields( 'email, 'password, 'rememberme ? "no" )) {
-// 				(email, password, rememberme) => Application.authenticate( email, password ) } } ~
+		path( "login" ) {
+			(get & user) { u =>
+				if (u.status != GUEST)
+					redirect( "/", StatusCodes.SeeOther )
+				else
+					complete( Application.login ) } ~
+			(post & formFields( 'email, 'password, 'rememberme ? "no" )) {
+				(email, password, rememberme) => Application.authenticate( email, password ) } } ~
 // 		(get & path( "register" ) & blog) {
 // 			_ => complete( Application.register ) } ~
 // 		(get & path( "admin" ) & admin) {

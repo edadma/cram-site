@@ -56,9 +56,9 @@ object Views {
 				<div class="jumbotron">
 					<div class="container"> {
 						if (user.status == GUEST)
-							<div class="pull-right"><h1><button class="btn btn-primary thin-right">Sign in</button><button class="btn btn-default">Sign up</button></h1></div>
+							<div class="pull-right"><h1><a class="btn btn-primary thin-right" href="/login">Sign in</a><button class="btn btn-default">Sign up</button></h1></div>
 						else
-							<div class="pull-right"><h1><span class="label thin-right">{user.name}</span><button class="btn btn-primary">Sign out</button></h1></div>
+							<div class="pull-right"><h1><a class="btn btn-primary" href="/logout">Sign out</a></h1><span class="well well-sm">{user.name.get}</span></div>
 						}
 						<h1>The Cram Site</h1>
 						<p>for cramming information into your head <em>fast</em></p>
