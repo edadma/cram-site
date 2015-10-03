@@ -151,14 +151,16 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.foldersPostCreate(parentid, info) ) } ~
 			(get & path("users"/"exists") & parameter("name")) {
 				name => complete( API.usersExistsName(name) ) } ~
+			(get & path("users"/"exists") & parameter("email")) {
+				email => complete( API.usersExistsEmail(email) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {
 // 				(b, _) => complete( API.visits(b) ) } ~
 // 			(get & path("users"/IntNumber)) {
 // 				userid => complete( API.usersGet(userid) ) } ~
-// 			(post & path("users") & entity(as[UserJson])) {
-// 				u => complete( API.usersPost(u) ) } ~
+			(post & path("users") & entity(as[UserJson])) {
+				u => complete( API.usersPost(u) ) } ~
 // 			(get & path("users"/Segment)) {
 // 				email => complete( API.users(email) ) } ~
 			(get & path("users")) {

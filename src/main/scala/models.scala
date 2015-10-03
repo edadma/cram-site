@@ -15,7 +15,7 @@ case class UserJson(
 	name: String,
 	email: String,
 	password: String,
-	role: Option[String]
+	description: Option[String]
 )
 
 object UserJson {

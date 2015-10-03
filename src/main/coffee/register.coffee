@@ -15,15 +15,20 @@ app.controller( 'RegisterController', ['$scope', '$resource', ($scope, $resource
 		else
 			$scope.nameStatus = ''
 	
-	$scope.submit = (role, title) ->
-		if angular.isDefined( role )
-			$scope.user.role = role
-			
+	$scope.checkEmail = ->
+		if $scope.user.email
+			Users.get {id: 'exists', email: $scope.user.email}, (result, response) ->
+				$scope.emailStatus = if result.exists then 'exists' else 'available'
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
+		else
+			$scope.nameStatus = ''
+	
+	$scope.submit = ->
 		Users.save $scope.user, (result, response) ->
-			if angular.isDefined( role )
-				$scope.message = {type: 'success', text: "User created: " + role.role + " for '" + title + "'"}
-			else
-				$scope.message = {type: 'success', text: "User created"}
+			console.log 'ok'
+			$scope.message = {type: 'success', text: "User created"}
 		, (response) ->
+			console.log response.data
 			$scope.message = {type: 'error', text: response.data}
 	] )

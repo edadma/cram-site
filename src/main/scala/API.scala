@@ -46,14 +46,17 @@ object API extends SessionDirectives {
 	def usersPost( u: models.UserJson ) = {
 		Users.findByEmail( u.email ) flatMap {
 			case None =>
+				Files.create( u.name, u.description getOrElse "", Some(usersid), true, None, None )
 				Users.create( Some(u.name), Some(u.email), Some(u.password), None, USER ) map {
-					id => HttpResponse( status = StatusCodes.Created, s"""{"id": $id}""" )
+					u => HttpResponse( status = StatusCodes.Created, s"""{"id": ${u.id.get}}""" )
 				}
-			case _ => Future( HttpResponse(status = StatusCodes.Conflict, "A user with that email address already exists.") )
+			case _ => Future( conflict("A user with that email address already exists.") )
 		}
 	}
 	
 	def usersExistsName( name: String ) = Users.findByName( name ) map {u => Map( "exists" -> (u map (_ => true) getOrElse false ))}
+	
+	def usersExistsEmail( email: String ) = Users.findByEmail( email ) map {u => Map( "exists" -> (u map (_ => true) getOrElse false ))}
 	
 	//def users( email: String ) = Users.find(URLDecoder.decode(email, "UTF-8")) map (u => u map (models.User.from(_)))
 	

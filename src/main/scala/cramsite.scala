@@ -36,6 +36,8 @@ package object cramsite {
 	
 	lazy val rootid = dao.Files.findRoot.head.id.get
 	
+	lazy val usersid = await( dao.Files.find(rootid, "Users") ).head.id.get
+	
 	def ok( message: String = "" ) = HttpResponse( status = StatusCodes.OK, message )
 	
 	def conflict( message: String ) = HttpResponse( status = StatusCodes.Conflict, message )

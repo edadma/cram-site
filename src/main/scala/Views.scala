@@ -280,10 +280,12 @@ object Views {
 					<div class="form-group">
 						<input type="text" class="form-control" ng-model="user.name" ng-model-options="{debounce: 300}" ng-change="checkName()"
 							placeholder="Name*" required="" autofocus=""/></div>
-							<p class="text-danger" ng-show="nameStatus == 'exists'">This name is not available. Try another one.</p>
-							<p class="text-success" ng-show="nameStatus == 'available'">This name is available.</p>
+						<p class="text-danger" ng-show="nameStatus == 'exists'">This name is not available. Try another one.</p>
+						<p class="text-success" ng-show="nameStatus == 'available'">This name is available.</p>
 					<div class="form-group">
-						<input type="email" class="form-control" ng-model="user.email" placeholder="Email address*" required=""/></div>
+						<input type="email" class="form-control" ng-model="user.email" ng-model-options="{debounce: 300}" ng-change="checkEmail()"
+							placeholder="Email address*" required=""/></div>
+						<p class="text-danger" ng-show="emailStatus == 'exists'">This email is associated with an registered user.</p>
 					<div class="form-group">
 						<input type="password" class="form-control" ng-model="user.password" placeholder="Password*" required=""/></div>
 					<div class="form-group">
