@@ -6,6 +6,15 @@ app.controller( 'RegisterController', ['$scope', '$resource', ($scope, $resource
 
 	$scope.message = {type: 'none'}
 	
+	$scope.checkName = ->
+		if $scope.user.name
+			Users.get {id: 'exists', name: $scope.user.name}, (result, response) ->
+				$scope.nameStatus = if result.exists then 'exists' else 'available'
+			, (response) ->
+				$scope.message = {type: 'error', text: response.data}
+		else
+			$scope.nameStatus = ''
+	
 	$scope.submit = (role, title) ->
 		if angular.isDefined( role )
 			$scope.user.role = role

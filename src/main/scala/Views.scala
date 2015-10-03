@@ -56,7 +56,7 @@ object Views {
 				<div class="jumbotron">
 					<div class="container"> {
 						if (user.status == GUEST)
-							<div class="pull-right"><h1><a class="btn btn-primary thin-right" href="/login">Sign in</a><button class="btn btn-default">Sign up</button></h1></div>
+							<div class="pull-right"><h1><a class="btn btn-primary thin-right" href="/login">Sign in</a><a class="btn btn-default" href="/register">Sign up</a></h1></div>
 						else
 							<div class="pull-right"><h1><a class="btn btn-primary" href="/logout">Sign out</a></h1><span class="well well-sm">{user.name.get}</span></div>
 						}
@@ -265,7 +265,7 @@ object Views {
 		}
 	}
 	
-	def register( role: Option[(Int, String, String, String)] ) =
+	def register =
 		main( "Registration" ) {
 			<xml:group>
 				<link href="/css/register.css" rel="stylesheet"/>
@@ -278,7 +278,10 @@ object Views {
 				<form class="form-register" ng-submit="submit()">
 					<h2 class="form-register-heading">Registration</h2>
 					<div class="form-group">
-						<input type="text" class="form-control" ng-model="user.name" placeholder="Name*" required="" autofocus=""/></div>
+						<input type="text" class="form-control" ng-model="user.name" ng-model-options="{debounce: 300}" ng-change="checkName()"
+							placeholder="Name*" required="" autofocus=""/></div>
+							<p class="text-danger" ng-show="nameStatus == 'exists'">This name is not available. Try another one.</p>
+							<p class="text-success" ng-show="nameStatus == 'available'">This name is available.</p>
 					<div class="form-group">
 						<input type="email" class="form-control" ng-model="user.email" placeholder="Email address*" required=""/></div>
 					<div class="form-group">

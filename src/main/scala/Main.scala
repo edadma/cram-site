@@ -149,6 +149,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.talliesPost(userid, pairid, update) ) } ~
 			(post & path("folders") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>
 				complete( API.foldersPostCreate(parentid, info) ) } ~
+			(get & path("users"/"exists") & parameter("name")) {
+				name => complete( API.usersExistsName(name) ) } ~
 // 			(get & path( "visits"/"count" ) & admin) {
 // 				(b, _) => complete( API.visitsCount(b) ) } ~
 // 			(get & path( "visits" ) & admin) {

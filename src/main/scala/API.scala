@@ -53,6 +53,8 @@ object API extends SessionDirectives {
 		}
 	}
 	
+	def usersExistsName( name: String ) = Users.findByName( name ) map {u => Map( "exists" -> (u map (_ => true) getOrElse false ))}
+	
 	//def users( email: String ) = Users.find(URLDecoder.decode(email, "UTF-8")) map (u => u map (models.User.from(_)))
 	
 	//def users = Users.list map (u => u map (models.User.from(_)))
