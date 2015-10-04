@@ -6,6 +6,8 @@ organization  := "xyz.hyperreal"
 
 scalaVersion  := "2.11.7"
 
+javaOptions   += "-Dconfig.file=application.conf"
+
 scalacOptions := Seq("-unchecked", "-deprecation", "-feature", "-language:postfixOps", "-encoding", "utf8")
 
 resolvers += "Hyperreal Repository" at "https://dl.bintray.com/edadma/maven"

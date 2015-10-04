@@ -25,19 +25,13 @@ import dao._
 
 object API extends SessionDirectives {
 	
-	val LIMIT = 2
+	val LIMIT = 5
   val conf = ConfigFactory.load
 	val reserved = conf.opt[List[String]]( "blog.domain.reserved" )
 
 	def visitsCount = Queries.visitsCount map (c => Map( "count" -> c ))
 	
 	def visits = Queries.visits
-	
-// 	def domainsGet( domain: String ) =
-// 		if (reserved.get exists (_ == domain))
-// 			Future( Map("available" -> false) )
-// 		else
-// 			Blogs.find( domain ) map (u => Map( "available" -> (u == None) ))
 
 	def usersGet( userid: Int ) = Users.find(userid)
 	
