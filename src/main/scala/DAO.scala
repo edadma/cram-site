@@ -53,8 +53,11 @@ object Users extends TableQuery(new UsersTable(_)) {
 	def find( email: String, password: String ) = db.run( filter(r => r.email === email && r.password === password).result ) map (_.headOption)
 	
 	def create( name: Option[String], email: Option[String], password: Option[String], avatar: Option[Int], status: Int ) =
-		db.run( (this returning map(_.id) into ((user, id) => user.copy(id=Some(id)))) += User(name, email, password, avatar, Instant.now, status.asInstanceOf[Byte]) )
+		db.run( (this returning map(_.id) into ((user, id) => user.copy(id = Some(id)))) += User(name, email, password, avatar, Instant.now, status.asInstanceOf[Byte]) )
 
+	def update( id: Int, name: String, email: String, password: String, status: Int ) =
+		db.run( filter(_.id === id) map (u => (u.name, u.email, u.password, u.status)) update (Some(name), Some(email), Some(password), status.toByte) )
+	
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
 	}

@@ -47,8 +47,14 @@ object API extends SessionDirectives {
 		await( Users.findByEmail(u.email) ) match {
 			case None =>
 				Files.create( u.name, u.description getOrElse "", Some(usersid), true, None, None )
-
-				val id = await( Users.create(Some(u.name), Some(u.email), Some(u.password), None, USER) ).id.get.toString
+				
+				val id =
+					g match {
+						case Some( gu ) =>
+							Users.update( gu.id.get, u.name, u.email, u.password, USER )
+							gu.id.get.toString
+						case None => await( Users.create(Some(u.name), Some(u.email), Some(u.password), None, USER) ).id.get.toString
+					}
 
 				(setSession( "id" -> id ) & complete( HttpResponse( status = StatusCodes.Created, s"""{"id": $id}""") ))
 			case _ => complete( conflict("A user with that email address already exists.") )
