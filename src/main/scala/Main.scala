@@ -159,8 +159,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 // 				(b, _) => complete( API.visits(b) ) } ~
 // 			(get & path("users"/IntNumber)) {
 // 				userid => complete( API.usersGet(userid) ) } ~
-			(post & path("users") & entity(as[UserJson])) {
-				u => complete( API.usersPost(u) ) } ~
+			(post & path("users") & detach(context) & entity(as[UserJson]) & optionalUser) {
+				(u, g) => API.usersPost( u, g ) } ~
 // 			(get & path("users"/Segment)) {
 // 				email => complete( API.users(email) ) } ~
 			(get & path("users")) {

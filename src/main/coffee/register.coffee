@@ -1,6 +1,6 @@
 app = angular.module 'register', ['ngResource']
 
-app.controller( 'RegisterController', ['$scope', '$resource', ($scope, $resource) ->
+app.controller( 'RegisterController', ['$scope', '$resource', '$window', ($scope, $resource, $window) ->
 	
 	Users = $resource '/api/v1/users/:id'
 
@@ -26,9 +26,8 @@ app.controller( 'RegisterController', ['$scope', '$resource', ($scope, $resource
 	
 	$scope.submit = ->
 		Users.save $scope.user, (result, response) ->
-			console.log 'ok'
 			$scope.message = {type: 'success', text: "User created"}
+			$window.location.href = '/'
 		, (response) ->
-			console.log response.data
 			$scope.message = {type: 'error', text: response.data}
 	] )
