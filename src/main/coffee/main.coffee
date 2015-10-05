@@ -235,11 +235,13 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.value = $scope.lessonData.pairs[index].front
 		$scope.editingFront = index
 		$scope.editingBack = undefined
+		$scope.lessonData.pairs[index].frontInputTarget.focus()
 	
 	$scope.editBack = (index) ->
 		$scope.value = $scope.lessonData.pairs[index].back
 		$scope.editingBack = index
 		$scope.editingFront = undefined
+		$scope.lessonData.pairs[index].backInputTarget.focus()
 	
 	$scope.remove = (index) ->
 		Pairs.delete {id: $scope.lessonData.pairs[index].id}, (result, response) ->

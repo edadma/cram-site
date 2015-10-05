@@ -126,13 +126,13 @@ object Views {
 												<td ng-click="editFront($index)">
 													<span ng-hide="editingFront == $index" ng-bind="pair.front"></span>
 													<form ng-show="editingFront == $index" ng-submit="updateFront($index, value)" ng-controller="LessonEditFormController">
-														<input type="text" class="form-control" ng-model="value" ng-blur="clear()" autofocus=""/>
+														<input type="text" class="form-control" ng-model="value" ng-blur="clear()" ng-target="pair.frontInputTarget"/>
 													</form>
 												</td>
 												<td ng-click="editBack($index)">
 													<span ng-hide="editingBack == $index" ng-bind="pair.back"></span>
 													<form ng-show="editingBack == $index" ng-submit="updateBack($index, value)" ng-controller="LessonEditFormController">
-														<input type="text" class="form-control" ng-model="value" ng-blur="clear()" autofocus=""/>
+														<input type="text" class="form-control" ng-model="value" ng-blur="clear()" ng-target="pair.backInputTarget"/>
 													</form>
 												</td>
 												<td width="1"><button class="btn btn-danger" ng-click="remove($index)">Remove</button></td>
