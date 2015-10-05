@@ -224,6 +224,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		if $scope.correct != undefined and not $scope.correct
 			$scope.correct = true
 			$scope.setInputDisabled( false )
+			$scope.message = {type: 'none'}
 			challenge( $scope.done )
 	
 	$scope.editFront = (index) ->
@@ -252,9 +253,6 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			$scope.message = {type: 'error', text: response.data}
 		
 	challenge = (done) ->
-		if not $scope.correct
-			$scope.message = {type: 'none'}
-			
 		$scope.response = ''
 		$scope.responseInputTarget.focus()
 		
