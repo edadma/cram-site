@@ -95,6 +95,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.fileName = ''
 		$scope.fileDescription = ''
 		$scope.show = 'edit-folder'
+		$scope.editFolderInputTarget.focus()
 	
 	$scope.editFolder = ->
 		if $scope.fileName != ''
@@ -112,7 +113,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.lessonName = ''
 		$scope.lessonDescription = ''
 		$scope.show = 'create-lesson'
-	
+		$scope.createLessonInputTarget.focus()
+		
 	$scope.createLesson = ->
 		if $scope.lessonName != ''
 			Files.save {parentid: $scope.path[$scope.path.length - 1].id},				
@@ -126,7 +128,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	$scope.inputLessonForm = ->
 		$scope.lessonData = ''
 		$scope.show = 'input-lesson'
-	
+		$scope.inputLessonInputTarget.focus()
+		
 	$scope.inputLesson = ->
 		if $scope.lessonName != ''
 			Files.save {parentid: $scope.path[$scope.path.length - 1].id, content: true},				
@@ -140,7 +143,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.fileName = ''
 		$scope.fileDescription = ''
 		$scope.show = 'edit-lesson'
-	
+		$scope.editLessonInputTarget.focus()
+		
 	$scope.editLesson = ->
 		if $scope.fileName != ''
 			Files.save {id: $scope.file.id},				
@@ -303,6 +307,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			$scope.file = file
 			$scope.lessonData = result
 			$scope.show = 'file'
+			$scope.addInputTarget.focus()
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 		

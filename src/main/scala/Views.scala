@@ -139,7 +139,7 @@ object Views {
 											</tr>
 											<tr>
 												<form ng-submit="add()">
-													<td><input type="text" class="form-control" ng-model="front" placeholder="New flashcard front" autofocus=""/></td>
+													<td><input type="text" class="form-control" ng-model="front" placeholder="New flashcard front" ng-target="addInputTarget"/></td>
 													<td><input type="text" class="form-control" ng-model="back" placeholder="New flashcard back"/></td>
 													<td width="1"><input type="submit" class="btn btn-primary form-control" value="Add"/></td>
 												</form>
@@ -166,7 +166,7 @@ object Views {
 					<div ng-show="show == 'edit-folder'">
 						<form ng-submit="editFolder()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="fileName" placeholder="New Topic name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="fileName" placeholder="New Topic name" ng-target="editFolderInputTarget"/>
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" ng-model="fileDescription" placeholder="New Topic description"/>
@@ -178,7 +178,7 @@ object Views {
 					<div ng-show="show == 'create-lesson'">
 						<form ng-submit="createLesson()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="lessonName" placeholder="Enter lesson name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="lessonName" placeholder="Enter lesson name" ng-target="createLessonInputTarget"/>
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" ng-model="lessonDescription" placeholder="Enter lesson description"/>
@@ -190,7 +190,7 @@ object Views {
 					<div ng-show="show == 'input-lesson'">
 						<form ng-submit="inputLesson()">
 							<div class="form-group">
-								<textarea class="form-control" rows="4" cols="50" ng-model="lessonData" placeholder="Enter lesson data"></textarea>
+								<textarea class="form-control" rows="4" cols="50" ng-model="lessonData" placeholder="Enter lesson data" ng-target="inputLessonInputTarget"></textarea>
 							</div>
 							<button type="submit" class="btn btn-default">Submit</button>
 						</form>
@@ -199,7 +199,7 @@ object Views {
 					<div ng-show="show == 'edit-lesson'">
 						<form ng-submit="editLesson()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="fileName" placeholder="New Topic name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="fileName" placeholder="New Topic name" ng-target="editLessonInputTarget"/>
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" ng-model="fileDescription" placeholder="New Topic description"/>
