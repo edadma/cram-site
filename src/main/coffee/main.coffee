@@ -15,7 +15,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	Lessons = $resource '/api/v1/lessons/:id'
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
-	LIMIT = 3
+	LIMIT = 2
 	$scope.inputDisabled = false
 	$scope.responseInputTarget = {}
 	$scope.responseButtonTarget = {}
@@ -180,7 +180,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 				$scope.message = {type: 'success', text: 'Right!'}
 				1
 			else
-				$scope.message = {type: 'error', text: 'Wrong: "' + standard + '"'}
+				$scope.message = {type: 'error', text: 'Wrong: "' + standard + '" (Press SPACE key to continue)'}
 				-2
 		
 		if $scope.side == 'front'
@@ -215,7 +215,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			$scope.message = {type: 'error', text: response.data}
 			
 		if $scope.correct
-			challenge( $scope.done )
+			if not $scope.complete
+				challenge( $scope.done )
 		else
 			$scope.setInputDisabled( true )
 			$scope.responseButtonTarget.focus()
@@ -224,7 +225,6 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		if not $scope.correct
 			$scope.correct = true
 			$scope.setInputDisabled( false )
-			console.log $scope.inputDisabled
 			challenge( $scope.done )
 	
 	$scope.editFront = (index) ->
@@ -256,27 +256,27 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.message = {type: 'none'}
 		$scope.response = ''
 		$scope.responseInputTarget.focus()
-		if !$scope.complete
-			if done
-				$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
-				$scope.lesson.tallies.splice( $scope.challengeIndex, 1 )
+		
+		if done
+			$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
+			$scope.lesson.tallies.splice( $scope.challengeIndex, 1 )
 
-			if $scope.lesson.pairs.length == 1
-				$scope.challengeIndex = 0
+		if $scope.lesson.pairs.length == 1
+			$scope.challengeIndex = 0
+		else
+			if done or $scope.challengeIndex == undefined
+				$scope.challengeIndex = random( $scope.lesson.pairs.length )
 			else
-				if done or $scope.challengeIndex == undefined
-					$scope.challengeIndex = random( $scope.lesson.pairs.length )
-				else
-					indices = (i for i in [0..$scope.lesson.pairs.length - 1])
-					indices.splice( $scope.challengeIndex, 1 )
-					$scope.challengeIndex = indices[random( $scope.lesson.pairs.length - 1 )]
-				
-			if $scope.lesson.info.direction == 'duplex'
-				$scope.side = if random( 2 ) == 0 then 'front' else 'back'
-			else
-				$scope.side = 'front'
-				
-			$scope.challenge = if $scope.side == 'front' then $scope.lesson.pairs[$scope.challengeIndex].front else $scope.lesson.pairs[$scope.challengeIndex].back
+				indices = (i for i in [0..$scope.lesson.pairs.length - 1])
+				indices.splice( $scope.challengeIndex, 1 )
+				$scope.challengeIndex = indices[random( $scope.lesson.pairs.length - 1 )]
+			
+		if $scope.lesson.info.direction == 'duplex'
+			$scope.side = if random( 2 ) == 0 then 'front' else 'back'
+		else
+			$scope.side = 'front'
+			
+		$scope.challenge = if $scope.side == 'front' then $scope.lesson.pairs[$scope.challengeIndex].front else $scope.lesson.pairs[$scope.challengeIndex].back
 		
 	random = (range) -> Math.floor( Math.random()*range )
 		

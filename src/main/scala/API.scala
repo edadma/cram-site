@@ -25,7 +25,6 @@ import dao._
 
 object API extends SessionDirectives {
 	
-	val LIMIT = 5
   val conf = ConfigFactory.load
 	val reserved = conf.opt[List[String]]( "blog.domain.reserved" )
 
