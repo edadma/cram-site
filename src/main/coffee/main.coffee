@@ -17,8 +17,6 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	Folders = $resource '/api/v1/folders/:id'
 	LIMIT = 2
 	$scope.inputDisabled = false
-	$scope.responseInputTarget = {}
-	$scope.responseButtonTarget = {}
 	
 	$scope.setInputDisabled = (v) ->
 		$scope.inputDisabled = v
@@ -81,6 +79,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.fileName = ''
 		$scope.fileDescription = ''
 		$scope.show = 'create-folder'
+		$scope.createFolderInputTarget.focus()
 	
 	$scope.createFolder = ->
 		if $scope.fileName != ''
@@ -153,13 +152,13 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 				$scope.show = 'file'
 			, (response) ->
 				$scope.message = {type: 'error', text: response.data}
-			
+
 	$scope.startCramming = ->
 		$scope.start = true
 		$scope.complete = false
 		$scope.challengeIndex = undefined
 		$scope.setInputDisabled( false )
-		$scope.correct = true
+		$scope.correct = undefined
 		$scope.message = {type: 'none'}
 		$scope.lesson = angular.copy $scope.lessonData
 		$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [0..$scope.lesson.pairs.length - 1])
@@ -222,7 +221,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			$scope.responseButtonTarget.focus()
 	
 	$scope.next = ->
-		if not $scope.correct
+		if $scope.correct != undefined and not $scope.correct
 			$scope.correct = true
 			$scope.setInputDisabled( false )
 			challenge( $scope.done )
@@ -253,7 +252,9 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			$scope.message = {type: 'error', text: response.data}
 		
 	challenge = (done) ->
-		$scope.message = {type: 'none'}
+		if not $scope.correct
+			$scope.message = {type: 'none'}
+			
 		$scope.response = ''
 		$scope.responseInputTarget.focus()
 		

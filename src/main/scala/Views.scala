@@ -154,7 +154,7 @@ object Views {
 					<div ng-show="show == 'create-folder'">
 						<form ng-submit="createFolder()" class="form-inline">
 							<div class="form-group">
-								<input type="text" class="form-control" ng-model="fileName" placeholder="Topic name" autofocus=""/>
+								<input type="text" class="form-control" ng-model="fileName" placeholder="Topic name" ng-target="createFolderInputTarget"/>
 							</div>
 							<div class="form-group">
 								<input type="text" class="form-control" ng-model="fileDescription" placeholder="Topic description"/>
