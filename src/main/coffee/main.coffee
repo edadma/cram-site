@@ -67,9 +67,15 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.path.splice( index + 1, $scope.path.length - index - 1 )
 		directory($scope.path[index])
 		
-	$scope.showCreateFolder = -> $scope.path.length > 0 and $scope.path[0].name == 'Topics' and not $scope.file
+	$scope.canModifyContents = -> $scope.path.length > 0 and ($scope.path[0].name == 'Topics' or ($scope.path[0].name == 'Users' and $scope.path.length > 1 and $scope.path[1].name == $scope.user.name))
 	
-	$scope.showModifyFolder = -> $scope.path.length > 1 and $scope.path[0].name == 'Topics' and not $scope.file
+	$scope.canCreateLesson = ->
+		$scope.canModifyContents() and (($scope.path.length > 1 and $scope.path[0].name == 'Topics') or ($scope.path.length > 1 and $scope.path[0].name == 'Users')) and not $scope.file
+		
+	$scope.canCreateFolder = -> $scope.canModifyContents() and not $scope.file
+	
+	$scope.canModifyFolder = ->
+		$scope.canModifyContents() and (($scope.path.length > 1 and $scope.path[0].name == 'Topics') or ($scope.path.length > 2 and $scope.path[0].name == 'Users')) and not $scope.file
 	
 	$scope.createFolderForm = ->
 		$scope.fileName = ''

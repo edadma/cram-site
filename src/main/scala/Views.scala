@@ -1,5 +1,7 @@
 package xyz.hyperreal.cramsite
 
+import spray.json._
+
 import com.typesafe.config.ConfigFactory
 import com.github.kxbmap.configs._
 
@@ -52,7 +54,7 @@ object Views {
 				<script src="/js/ng-target.js"></script>
 			</xml:group>
 		} {
-			<div ng-app="cramsite" ng-controller="MainController" ng-init={"user = {id: " + user.id.get + ", name: " + user.name + ", status: " + user.status + "}"} ng-cloak="">
+			<div ng-app="cramsite" ng-controller="MainController" ng-init={"user = " + user.toJson.compactPrint} ng-cloak="">
 				<div class="jumbotron">
 					<div class="container"> {
 						if (user.status == GUEST)
@@ -79,11 +81,10 @@ object Views {
 						<button ng-show={"file && !start"} ng-click="editLessonForm()" class="btn btn-default navbar-btn">Edit Lesson</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
-						<button ng-show="showModifyFolder()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
-						<button ng-show="showModifyFolder()" ng-click="inputLessonForm()" class="btn btn-primary navbar-btn">Input Lesson</button>
-						<!-- <button ng-show="showModifyFolder()" ng-click="uploadLessonForm()" class="btn btn-primary navbar-btn">Upload Lesson</button> -->
-						<button ng-show="showCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
-						<button ng-show="showModifyFolder()" ng-click="editFolderForm()" class="btn btn-default navbar-btn">Edit Topic</button>
+						<button ng-show="canCreateLesson()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
+						<button ng-show="canCreateLesson()" ng-click="inputLessonForm()" class="btn btn-primary navbar-btn">Input Lesson</button>
+						<button ng-show="canCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
+						<button ng-show="canModifyFolder()" ng-click="editFolderForm()" class="btn btn-default navbar-btn">Edit Topic</button>
 					</div>
 				</nav>
 				
