@@ -122,7 +122,7 @@ object Views {
 												<th>Front</th>
 												<th>Back</th>
 											</tr>
-											<tr ng-repeat="pair in lessonData.pairs">
+											<tr ng-repeat="pair in lessonData.pairs" ng-show="canModifyContents()">
 												<td ng-click="editFront($index)">
 													<span ng-hide="editingFront == $index" ng-bind="pair.front"></span>
 													<form ng-show="editingFront == $index" ng-submit="updateFront($index, value)" ng-controller="LessonEditFormController">
@@ -137,7 +137,11 @@ object Views {
 												</td>
 												<td width="1"><button class="btn btn-danger" ng-click="remove($index)">Remove</button></td>
 											</tr>
-											<tr>
+											<tr ng-repeat="pair in lessonData.pairs" ng-show="!canModifyContents()">
+												<td>{"{{pair.front}}"}</td>
+												<td>{"{{pair.back}}"}</td>
+											</tr>
+											<tr ng-show="canModifyContents()">
 												<form ng-submit="add()">
 													<td><input type="text" class="form-control" ng-model="front" placeholder="New flashcard front" ng-target="addInputTarget"/></td>
 													<td><input type="text" class="form-control" ng-model="back" placeholder="New flashcard back"/></td>
