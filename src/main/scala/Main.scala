@@ -101,6 +101,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		//hostName {h => complete(h)} ~
 		(get & pathSingleSlash & user) {
 			u => complete( Application.index(u) ) } ~
+		(get & path( "image"/IntNumber )) {
+			img => complete( Application.image(img) ) } ~
 		path( "login" ) {
 			(get & user) { u =>
 				if (u.status != GUEST)

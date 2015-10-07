@@ -6,6 +6,7 @@ import slick.jdbc.meta.MTable
 import com.typesafe.config.ConfigFactory
 import com.github.kxbmap.configs._
 
+import java.io.DataInputStream
 import concurrent.ExecutionContext.Implicits.global
 
 import org.joda.time.Instant
@@ -29,31 +30,40 @@ object Startup {
 	
 		val conf = ConfigFactory.load
 		
-		if (conf hasPath "init") {
-			val u = conf.get[Map[String, String]]("init.suadmin")
-				Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN )
-		}
+		val u = conf.get[Map[String, String]]("init.suadmin")
+			Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN ) flatMap {
+				u =>
+					val conn = getClass.getResource( "Places-folder-icon.png" ).openConnection
+					val size = conn.getContentLength
+					val is = conn.getInputStream
+					val img = new Array[Byte](size)
+					
+					new DataInputStream( is ).readFully( img )
 		
-		Files.create( "/", "", None, false, None, None ) map {
-			root =>
-				Files.create( "Topics", "Browse learning topics", root.id, true, None, None )
-// 				Files.create( "Topics", "Browse learning topics", root.id, true, None, None ) map {
-// 					topics =>
-// 						Files.create( "Topic 1", "A topic", topics.id, true, None, None )
-// 				}
-				Files.create( "Users", "Browse user folders", root.id, true, None, None )
-// 				Files.create( "Users", "Browse user folders", root.id, true, None, None ) map {
-// 					users =>
-// 						Files.create( "Bob", "Bob's folder", users.id, true, None, None ) map {
-// 							bob =>
-// 								Files.create( "French 101", "French vocabulary", bob.id, true, Some("""{"direction": "duplex"}"""), None ) map {
-// 									french101 =>
-// 										Pairs.create( french101.id.get, "one", "un" )
-// 										Pairs.create( french101.id.get, "two", "deux" )
-// 								}
-// 						}
-// 				}
-		}
+					Medias.create( u.id.get, img, "image/png" )
+			} map {
+				folderid =>
+					Files.create( "/", "", None, false, None, None ) map {
+						root =>
+							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(folderid) )
+			// 				Files.create( "Topics", "Browse learning topics", root.id, true, None, None ) map {
+			// 					topics =>
+			// 						Files.create( "Topic 1", "A topic", topics.id, true, None, None )
+			// 				}
+							Files.create( "Users", "Browse user folders", root.id, true, None, None )
+			// 				Files.create( "Users", "Browse user folders", root.id, true, None, None ) map {
+			// 					users =>
+			// 						Files.create( "Bob", "Bob's folder", users.id, true, None, None ) map {
+			// 							bob =>
+			// 								Files.create( "French 101", "French vocabulary", bob.id, true, Some("""{"direction": "duplex"}"""), None ) map {
+			// 									french101 =>
+			// 										Pairs.create( french101.id.get, "one", "un" )
+			// 										Pairs.create( french101.id.get, "two", "deux" )
+			// 								}
+			// 						}
+			// 				}
+					}
+			}
 	}
 	
 }

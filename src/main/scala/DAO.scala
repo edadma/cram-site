@@ -233,7 +233,7 @@ object Medias extends TableQuery(new MediasTable(_)) {
 
 	def findByPostid(userid: Int) = filter (_.userid === userid)
 
-	def create(userid: Int, data: Array[Byte], mime: String) = db.run( this returning map(_.id) += Media(userid, data, mime) )
+	def create( userid: Int, data: Array[Byte], mime: String ) = db.run( this returning map(_.id) += Media(userid, data, mime) )
 
 	def delete(userid: Int): Future[Int] = {
 		db.run(filter(_.userid === userid).delete)

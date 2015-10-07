@@ -1,6 +1,7 @@
 package xyz.hyperreal.cramsite
 
-import spray.http.{StatusCodes, HttpResponse, HttpHeaders, RemoteAddress}
+import spray.http.{StatusCodes, HttpResponse, HttpHeaders, HttpEntity, RemoteAddress, ContentType, HttpData}
+import spray.http.MediaTypes._
 import spray.routing.directives.RouteDirectives._
 
 import org.joda.time.Instant
@@ -39,6 +40,12 @@ object Application extends SessionDirectives {
 	}
 	
 	def register = Views.register
+	
+	def image( img: Int ) = {
+		await( dao.Medias.find(img) ) map
+			(image => HttpResponse( entity = HttpEntity(ContentType(`image/png`), HttpData(image.data)) )) getOrElse
+			HttpResponse( status = StatusCodes.NotFound, "image not found" )
+	}
 	
 // 	def post( blog: dao.Blog, user: models.User, category: Int, headline: String, text: String ) = {
 // 		dao.Posts.create( blog.id.get, user.id, headline, text, Instant.now ) map (dao.Categorizations.create( _, category ))
