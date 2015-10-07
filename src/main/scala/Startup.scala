@@ -50,20 +50,22 @@ object Startup {
 					Future.sequence( Seq(
 						createImage( u.id.get, "Places-folder-icon.png" ),
 						createImage( u.id.get, "Apps-system-users-icon.png" ),
-						createImage( u.id.get, "Apps-accessories-text-editor-icon.png" )
+						createImage( u.id.get, "Apps-accessories-text-editor-icon.png" ),
+						createImage( u.id.get, "Places-folder-favorites-icon.png" )
 					))
 			} map {
-				case Seq(folderimg, usersimg, fileimg) =>
-					folderimgid = folderimg
-					fileimgid = fileimg
+				case Seq(folder, users, file, favorites) =>
+					folderid = folder
+					fileid = file
 					Files.create( "/", "", None, false, None, None ) map {
 						root =>
-							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(folderimg) )
+							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(folder) )
 			// 				Files.create( "Topics", "Browse learning topics", root.id, true, None, None ) map {
 			// 					topics =>
 			// 						Files.create( "Topic 1", "A topic", topics.id, true, None, None )
 			// 				}
-							Files.create( "Users", "Browse user folders", root.id, true, None, Some(usersimg) )
+							Files.create( "Favorites", "Browse your favorites", root.id, true, None, Some(favorites) )
+							Files.create( "Users", "Browse user folders", root.id, true, None, Some(users) )
 			// 				Files.create( "Users", "Browse user folders", root.id, true, None, None ) map {
 			// 					users =>
 			// 						Files.create( "Bob", "Bob's folder", users.id, true, None, None ) map {
