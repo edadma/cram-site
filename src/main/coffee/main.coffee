@@ -6,27 +6,25 @@ app.controller 'LessonEditFormController', ['$scope', '$resource', ($scope, $res
 	]
 
 app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope, $resource, FileUploader) ->
-	$scope.message = {type: 'none'}
-	$scope.path = []
-	$scope.file = undefined
-	ChunkSize = 6
+	CHUNK_SIZE = 6
+	LIMIT = 3
 	Pairs = $resource '/api/v1/pairs/:id'
 	Files = $resource '/api/v1/files/:id'
 	Lessons = $resource '/api/v1/lessons/:id'
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
-	LIMIT = 3
 	$scope.inputDisabled = false
 	
 	$scope.setInputDisabled = (v) ->
 		$scope.inputDisabled = v
 	
 	home = ->
+		$scope.path = []
+		$scope.file = undefined
 		$scope.show = 'directory'
+		$scope.message = {type: 'none'}
 		Files.query (result, response) ->
-			$scope.path = []
-			$scope.file = undefined
-			$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
+			$scope.chunks = (result.slice(i, i + CHUNK_SIZE) for i in [0..result.length - 1] by CHUNK_SIZE)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
 
@@ -294,7 +292,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 			if result.length == 0
 				$scope.chunks = []
 			else
-				$scope.chunks = (result.slice(i, i + ChunkSize) for i in [0..result.length - 1] by ChunkSize)
+				$scope.chunks = (result.slice(i, i + CHUNK_SIZE) for i in [0..result.length - 1] by CHUNK_SIZE)
 			$scope.show = 'directory'
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
