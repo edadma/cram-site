@@ -155,7 +155,7 @@ object API extends SessionDirectives {
 	def foldersPostCreate( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
-				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, None) map {
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, Some(folderimgid)) map {
 					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>

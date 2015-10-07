@@ -43,7 +43,7 @@ object Application extends SessionDirectives {
 	
 	def image( img: Int ) = {
 		await( dao.Medias.find(img) ) map
-			(image => HttpResponse( entity = HttpEntity(ContentType(`image/png`), HttpData(image.data)) )) getOrElse
+			(image => HttpResponse( entity = HttpEntity(ContentType(forExtension(image.extension) getOrElse `application/octet-stream`), HttpData(image.data)) )) getOrElse
 			HttpResponse( status = StatusCodes.NotFound, "image not found" )
 	}
 	

@@ -215,7 +215,7 @@ object Files extends TableQuery(new FilesTable(_)) {
 case class Media(
 	userid: Int,
 	data: Array[Byte],
-	mime: String,
+	extension: String,
 	id: Option[Int] = None
 )
 
@@ -223,9 +223,9 @@ class MediasTable(tag: Tag) extends Table[Media](tag, "medias") {
 	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 	def userid = column[Int]("userid")
 	def data = column[Array[Byte]]("data")
-	def mime = column[String]("mime")
+	def extension = column[String]("extension")
 	
-	def * = (userid, data, mime, id.?) <> (Media.tupled, Media.unapply)
+	def * = (userid, data, extension, id.?) <> (Media.tupled, Media.unapply)
 }
 
 object Medias extends TableQuery(new MediasTable(_)) {
@@ -233,7 +233,7 @@ object Medias extends TableQuery(new MediasTable(_)) {
 
 	def findByPostid(userid: Int) = filter (_.userid === userid)
 
-	def create( userid: Int, data: Array[Byte], mime: String ) = db.run( this returning map(_.id) += Media(userid, data, mime) )
+	def create( userid: Int, data: Array[Byte], extension: String ) = db.run( this returning map(_.id) += Media(userid, data, extension) )
 
 	def delete(userid: Int): Future[Int] = {
 		db.run(filter(_.userid === userid).delete)
