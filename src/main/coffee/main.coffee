@@ -15,7 +15,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	Lessons = $resource '/api/v1/lessons/:id'
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
-	LIMIT = 2
+	LIMIT = 3
 	$scope.inputDisabled = false
 	
 	$scope.setInputDisabled = (v) ->
@@ -164,6 +164,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.setInputDisabled( false )
 		$scope.correct = undefined
 		$scope.message = {type: 'none'}
+		$scope.progress = 0
 		$scope.lesson = angular.copy $scope.lessonData
 		$scope.lesson.tallies = ({foreward: 0, backward: 0} for i in [0..$scope.lesson.pairs.length - 1])
 		challenge()
@@ -265,6 +266,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		if done
 			$scope.lesson.pairs.splice( $scope.challengeIndex, 1 )
 			$scope.lesson.tallies.splice( $scope.challengeIndex, 1 )
+			$scope.progress = Math.floor( ($scope.lessonData.pairs.length - $scope.lesson.pairs.length)/$scope.lessonData.pairs.length*100 )
 
 		if $scope.lesson.pairs.length == 1
 			$scope.challengeIndex = 0

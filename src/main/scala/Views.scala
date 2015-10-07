@@ -110,6 +110,14 @@ object Views {
 										</div>
 									</form>
 								</div>
+								<div class="col-md-4">
+									<p>Progress</p>
+									<div class="progress">
+										<div class="progress-bar" role="progressbar" style="min-width: 2em; width: {{progress}}%;">
+											{"{{progress}}"}%
+										</div>
+									</div>
+								</div>
 							</div>
 							
 							<div ng-hide="start">
