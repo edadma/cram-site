@@ -33,6 +33,7 @@ object Views {
 				<link href="/webjars/bootstrap/3.3.5/css/bootstrap-theme.min.css" rel="stylesheet"/>
 				
 				<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+				
 				{head}
 			</head>
 			
@@ -40,6 +41,8 @@ object Views {
 				{content}
 				
 				<script src="/webjars/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+				
+				{xml.Unparsed(conf.get[String]("init.endcode"))}
 			</body>
 		</html>
 	
