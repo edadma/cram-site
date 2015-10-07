@@ -49,10 +49,13 @@ object Startup {
 				u =>
 					Future.sequence( Seq(
 						createImage( u.id.get, "Places-folder-icon.png" ),
-						createImage( u.id.get, "Apps-system-users-icon.png" )
+						createImage( u.id.get, "Apps-system-users-icon.png" ),
+						createImage( u.id.get, "Apps-accessories-text-editor-icon.png" )
 					))
 			} map {
-				case Seq(folderimg, usersimg) =>
+				case Seq(folderimg, usersimg, fileimg) =>
+					folderimgid = folderimg
+					fileimgid = fileimg
 					Files.create( "/", "", None, false, None, None ) map {
 						root =>
 							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(folderimg) )

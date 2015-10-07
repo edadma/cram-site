@@ -95,7 +95,7 @@ object API extends SessionDirectives {
 	def filesPostCreate( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
-				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("""{"direction": "duplex"}"""), None) map {
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("""{"direction": "duplex"}"""), Some(fileimgid)) map {
 					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>
@@ -120,7 +120,7 @@ object API extends SessionDirectives {
 				
 				Files.find( parentid, filename ) flatMap {
 					case None =>
-						Files.create( filename, src.drop(1).head.trim, Some(parentid), true, Some(src.drop(2).head.trim), None ) flatMap {
+						Files.create( filename, src.drop(1).head.trim, Some(parentid), true, Some(src.drop(2).head.trim), Some(fileimgid) ) flatMap {
 							f =>
 								Future.sequence( cards map {case Array(front, back) => Pairs.create(f.id.get, front.trim, back.trim)} ) map { _ =>
 									ok( f.toJson.compactPrint )

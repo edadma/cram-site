@@ -62,7 +62,7 @@ object Views {
 						else
 							<div class="pull-right"><h1><a class="btn btn-primary" href="/logout">Sign out</a></h1><span class="well well-sm">{user.name.get}</span></div>
 						}
-						<h1>The Cram Site</h1>
+						<h1><!-- <img src="/Books-icon.png"/> -->The Cram Site</h1>
 						<p>for cramming information into your head <em>fast</em></p>
 					</div>
 				</div>
