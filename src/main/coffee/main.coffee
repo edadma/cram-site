@@ -13,6 +13,7 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	Lessons = $resource '/api/v1/lessons/:id'
 	Tallies = $resource '/api/v1/tallies/:id1/:id2'
 	Folders = $resource '/api/v1/folders/:id'
+	Favorites = $resource '/api/v1/favorites/:id'
 	$scope.inputDisabled = false
 	
 	$scope.setInputDisabled = (v) ->
@@ -174,6 +175,15 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		, (response) ->
 			$scope.message = {type: 'error', text: response.data}
 	
+	$scope.favoriteLesson = ->
+		Favorites.save
+			userid: $scope.user.id
+			fileid: $scope.file.id
+		, (result, response) ->
+			$scope.message = {type: 'info', text: 'Added to your favorites'}
+		, (response) ->
+			$scope.message = {type: 'error', text: response.data}
+
 	$scope.respond = ->
 		standard = if $scope.side == 'front' then $scope.lesson.pairs[$scope.challengeIndex].back else $scope.lesson.pairs[$scope.challengeIndex].front
 		$scope.correct = $scope.response == standard
@@ -288,14 +298,24 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 	directory = (dir) ->
 		$scope.message = {type: 'none'}
 		$scope.file = undefined
-		Files.query {id: dir.id}, (result, response) ->
-			if result.length == 0
-				$scope.chunks = []
-			else
-				$scope.chunks = (result.slice(i, i + CHUNK_SIZE) for i in [0..result.length - 1] by CHUNK_SIZE)
-			$scope.show = 'directory'
-		,	(response) ->
-			$scope.message = {type: 'error', text: response.data}
+		if $scope.path.length == 1 and $scope.path[0].name == 'Favorites'
+			Favorites.query {id: $scope.user.id}, (result, response) ->
+				if result.length == 0
+					$scope.chunks = []
+				else
+					$scope.chunks = (result.slice(i, i + CHUNK_SIZE) for i in [0..result.length - 1] by CHUNK_SIZE)
+				$scope.show = 'directory'
+			,	(response) ->
+				$scope.message = {type: 'error', text: response.data}
+		else
+			Files.query {id: dir.id}, (result, response) ->
+				if result.length == 0
+					$scope.chunks = []
+				else
+					$scope.chunks = (result.slice(i, i + CHUNK_SIZE) for i in [0..result.length - 1] by CHUNK_SIZE)
+				$scope.show = 'directory'
+			,	(response) ->
+				$scope.message = {type: 'error', text: response.data}
 		
 	open = (file) ->
 		$scope.message = {type: 'none'}

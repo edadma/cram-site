@@ -22,6 +22,27 @@ object UserJson {
 	implicit val userJson = jsonFormat4( UserJson.apply )
 }
 
+case class FavoriteInfo(
+	userid: Int,
+	fileid: Int
+)
+
+object FavoriteInfo {
+	implicit val favoriteInfo = jsonFormat2( FavoriteInfo.apply )
+}
+
+case class FavoriteJson(
+	id: Int,
+	name: String,
+	description: String,
+	contents: Option[String],
+	imageid: Option[Int]
+)
+
+object FavoriteJson {
+	implicit val favoriteInfo = jsonFormat5( FavoriteJson.apply )
+}
+
 case class FileInfo(
 	name: String,
 	description: Option[String]

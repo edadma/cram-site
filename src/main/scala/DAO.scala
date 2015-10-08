@@ -180,7 +180,7 @@ class FilesTable(tag: Tag) extends Table[File](tag, "files") {
 	
 	def * = (name, description, created, parentid, visible, contents, imageid, id.?) <> (File.apply _ tupled, File.unapply)
 	def parent_fk = foreignKey("files_parent_fk", parentid, Files)(_.id.?, onDelete=ForeignKeyAction.Cascade)
-	def image_fk = foreignKey("files_image_fk", imageid, Medias)(_.id.?, onDelete=ForeignKeyAction.Cascade)
+	def image_fk = foreignKey("files_image_fk", imageid, Medias)(_.id.?, onDelete=ForeignKeyAction.SetNull)
 	def idx_files_name = index("idx_files_name", name)
 	def idx_files_name_parent = index("idx_files_name_parent", (name, parentid), unique = true )
 }
@@ -231,7 +231,7 @@ class MediasTable(tag: Tag) extends Table[Media](tag, "medias") {
 object Medias extends TableQuery(new MediasTable(_)) {
 	def find(id: Int): Future[Option[Media]] = db.run( filter(_.id === id) result ) map (_.headOption)
 
-	def findByPostid(userid: Int) = filter (_.userid === userid)
+	def findByUserid(userid: Int) = filter (_.userid === userid)
 
 	def create( userid: Int, data: Array[Byte], extension: String ) = db.run( this returning map(_.id) += Media(userid, data, extension) )
 
@@ -240,6 +240,37 @@ object Medias extends TableQuery(new MediasTable(_)) {
 	}
 	
 	def list: Future[Seq[Media]] = db.run(this.result)
+}
+
+case class Favorite(
+	userid: Int,
+	fileid: Int,
+	id: Option[Int] = None
+)
+
+class FavoritesTable(tag: Tag) extends Table[Favorite](tag, "favorites") {
+	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+	def userid = column[Int]("userid")
+	def fileid = column[Int]("fileid")
+	
+	def * = (userid, fileid, id.?) <> (Favorite.tupled, Favorite.unapply)
+	def user_fk = foreignKey("favorites_user_fk", userid, Users)(_.id, onDelete=ForeignKeyAction.Cascade)
+	def file_fk = foreignKey("favorites_file_fk", fileid, Files)(_.id, onDelete=ForeignKeyAction.Cascade)
+	def idx_favorites_user_file = index("idx_favorites_user_file", (userid, fileid), unique = true )
+}
+
+object Favorites extends TableQuery(new FavoritesTable(_)) {
+	def find(id: Int): Future[Option[Favorite]] = db.run( filter(_.id === id) result ) map (_.headOption)
+
+	def findByUserid(userid: Int) = filter (_.userid === userid)
+
+	def create( userid: Int, fileid: Int ) = db.run( this returning map(_.id) += Favorite(userid, fileid) )
+
+	def delete(id: Int): Future[Int] = {
+		db.run(filter(_.id === id).delete)
+	}
+	
+	def list: Future[Seq[Favorite]] = db.run(this.result)
 }
 
 case class Visit(

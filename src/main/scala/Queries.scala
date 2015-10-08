@@ -19,17 +19,43 @@ object Queries {
 	// visits
 	//
 	
-	def visitsCount = db.run( dao.Visits.length result )
+	def visitsCount = db.run( Visits.length result )
 	
-	def visits = db.run( dao.Visits joinLeft Users on (_.userid === _.id) result ) map {
+	def visits = db.run( Visits joinLeft Users on (_.userid === _.id) result ) map {
 		s => s map {case (v, u) => models.VisitJson.from( v, u )}
 	}
 	
-	def visits( index: Int, count: Int ) = db.run( dao.Visits drop index take count joinLeft Users on (_.userid === _.id) result ) map {
+	def visits( index: Int, count: Int ) = db.run( Visits drop index take count joinLeft Users on (_.userid === _.id) result ) map {
 		s => s map {case (v, u) => models.VisitJson.from( v, u )}
 	}
 	
 	def toMonth( time: Instant ) = time.toDateTime withDayOfMonth 1 withTime (0, 0, 0, 0)
+	
+	//
+	// Favorites
+	//
+	
+	def favorites( userid: Int ) = db.run( Favorites.findByUserid( userid ) join Files on (_.fileid === _.id) result ) map {
+		s => s map {
+			case (_, f) =>
+				val buf = new StringBuilder
+				
+				def element( f: File ) {
+					if (buf.nonEmpty && f.name != "")
+						buf.insert( 0, '/' )
+						
+					buf.insert( 0, f.name )
+					
+					f.parentid match {
+						case None =>
+						case Some( parentid ) => element( await(Files.find(parentid)).get )
+					}
+				}
+				
+				element( f )
+				models.FavoriteJson( f.id.get, buf.toString, f.description, f.contents, f.imageid )
+		}
+	}
 	
 // 	def findCommentsReplies( postid: Int, replyto: Int ) = db.stream( Comments.findByPostid(postid, replyto) result )
 // 	

@@ -162,4 +162,19 @@ object API extends SessionDirectives {
 				Future {conflict(s"'${info.name}' already exists")}
 		}
 	}
+	
+// 	def filepath( fileid: Int ) = {
+// 		val buf = new StringBuilder
+// 		
+// 		
+// 	}
+	
+	def favoritesPost( f: models.FavoriteInfo ) =
+		Favorites.create( f.userid, f.fileid ) map {
+			f => Map( "id" -> f )
+		}
+		
+	def favoritesGet( userid: Int ) = {
+		Queries.favorites( userid )
+	}
 }

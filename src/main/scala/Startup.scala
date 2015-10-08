@@ -19,7 +19,7 @@ object Startup {
 	
 	val extensionRegex = """^.*\.(.*)$"""r
 	
-	def createImage( userid: Int, image: String ) = {
+	def addImage( userid: Int, image: String ) = {
 		val conn = getClass.getResource( image ).openConnection
 		val img = new Array[Byte](conn.getContentLength)
 		val extension = image  match {
@@ -38,6 +38,7 @@ object Startup {
 				Files.schema ++
 				Pairs.schema ++
 				Tallies.schema ++
+				Favorites.schema ++
 				Medias.schema ++
 				Visits.schema
 			).create
@@ -48,16 +49,16 @@ object Startup {
 			Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN ) flatMap {
 				u =>
 					Future.sequence( Seq(
-						createImage( u.id.get, "Places-folder-icon.png" ),
-						createImage( u.id.get, "Apps-system-users-icon.png" ),
-						createImage( u.id.get, "Apps-accessories-text-editor-icon.png" ),
-						createImage( u.id.get, "Places-folder-favorites-icon.png" )
+						addImage( u.id.get, "Places-folder-icon.png" ),
+						addImage( u.id.get, "Apps-system-users-icon.png" ),
+						addImage( u.id.get, "Apps-accessories-text-editor-icon.png" ),
+						addImage( u.id.get, "Places-folder-favorites-icon.png" )
 					))
 			} map {
 				case Seq(folder, users, file, favorites) =>
 					folderid = folder
 					fileid = file
-					Files.create( "/", "", None, false, None, None ) map {
+					Files.create( "", "", None, false, None, None ) map {
 						root =>
 							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(folder) )
 			// 				Files.create( "Topics", "Browse learning topics", root.id, true, None, None ) map {
