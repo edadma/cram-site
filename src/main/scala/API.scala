@@ -36,19 +36,14 @@ object API extends SessionDirectives {
 	
 	def usersGet = Users.list
 	
-	def usersPost( u: models.UserJson, g: Option[User] ) = {
+	def usersPost( u: models.UserJson, g: User ) = {
 		await( Users.findByEmail(u.email) ) match {
 			case None =>
 				val folder = await( Files.create( u.name, u.description getOrElse "", Some(usersid), true, None, Some(defaultUserid) ) )
-				val priv = await( Files.create( "", "", Some(folder.id.get), false, None, None ) )
-				val id =
-					g match {
-						case Some( gu ) =>
-							Users.update( gu.id.get, u.name, u.email, u.password, USER )
-							gu.id.get.toString
-						case None => await( Users.create(Some(u.name), Some(u.email), Some(u.password), priv.id, USER) ).id.get.toString
-					}
+				val id = g.id.get.toString
 
+				Users.update( g.id.get, u.name, u.email, u.password, USER )
+				
 				(setSession( "id" -> id ) & complete( HttpResponse( status = StatusCodes.Created, s"""{"id": $id}""") ))
 			case _ => complete( conflict("A user with that email address already exists.") )
 		}

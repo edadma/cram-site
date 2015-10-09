@@ -47,9 +47,13 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		}
 		
 		def guest: Directive[dao.User :: HNil] = {
+			val priv = await( dao.Files.create( dao.Users.count toString, "", Some(privateid), false, None, None ) )
 			val u = await( dao.Users.create(None, None, None, None, GUEST) )
+			val uid = u.id.get.toString
 			
-			setSession( "id" -> u.id.get.toString ) & provide( u )
+			await( dao.Users.update(u.id.get, priv.id.get) )
+			
+			setSession( "id" -> uid ) & provide( u )
 		}
 		
 		def user: Directive[dao.User :: HNil] = optionalSession hflatMap {
@@ -169,7 +173,7 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 // 				(b, _) => complete( API.visits(b) ) } ~
 // 			(get & path("users"/IntNumber)) {
 // 				userid => complete( API.usersGet(userid) ) } ~
-			(post & path("users") & detach(context) & entity(as[UserJson]) & optionalUser) {
+			(post & path("users") & detach(context) & entity(as[UserJson]) & user) {
 				(u, g) => API.usersPost( u, g ) } ~
 // 			(get & path("users"/Segment)) {
 // 				email => complete( API.users(email) ) } ~

@@ -57,12 +57,17 @@ object Users extends TableQuery(new UsersTable(_)) {
 
 	def update( id: Int, name: String, email: String, password: String, status: Int ) =
 		db.run( filter(_.id === id) map (u => (u.name, u.email, u.password, u.status)) update (Some(name), Some(email), Some(password), status.toByte) )
+
+	def update( id: Int, pid: Int ) =
+		db.run( filter(_.id === id) map (u => (u.pid)) update Some(pid) )
 	
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
 	}
 	
 	def list: Future[Seq[User]] = db.run(this.result)
+	
+	def count = dbrun( this.length.result )
 }
 
 case class Pair(
@@ -192,7 +197,7 @@ object Files extends TableQuery(new FilesTable(_)) {
 
 	def find(parentid: Int, name: String) = db.run( filter (f => f.parentid.isDefined && f.name === name && f.parentid === parentid) result ) map (_.headOption)
 
-	def findRoot = dbrun( filter (_.parentid.isEmpty) result )
+	def findRoot = dbrun( filter (f => f.parentid.isEmpty) result )
 
 	def create(
 		name: String,

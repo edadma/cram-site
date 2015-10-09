@@ -36,6 +36,7 @@ package object cramsite {
 	
 	lazy val rootid = dao.Files.findRoot.head.id.get
 	lazy val usersid = await( dao.Files.find(rootid, "Users") ).head.id.get
+	lazy val privateid = await( dao.Files.find(rootid, "Private") ).head.id.get
 
 	var defaultFolderid: Int = _
 	var defaultFileid: Int = _
