@@ -155,6 +155,10 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 				complete( API.favoritesPost(fav) ) } ~
 			(get & path("favorites"/IntNumber) & session) { (userid, _) =>
 				complete( API.favoritesGet(userid) ) } ~
+// 			(post & path("private") & entity(as[FileInfo]) & session) { (f, _) =>
+// 				complete( API.privatePost(f) ) } ~
+// 			(get & path("private"/IntNumber) & session) { (userid, _) =>
+// 				complete( API.privateGet(userid) ) } ~
 			(get & path("users"/"exists") & parameter("name")) {
 				name => complete( API.usersExistsName(name) ) } ~
 			(get & path("users"/"exists") & parameter("email")) {

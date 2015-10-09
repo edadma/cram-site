@@ -39,14 +39,14 @@ object API extends SessionDirectives {
 	def usersPost( u: models.UserJson, g: Option[User] ) = {
 		await( Users.findByEmail(u.email) ) match {
 			case None =>
-				Files.create( u.name, u.description getOrElse "", Some(usersid), true, None, None )
-				
+				val folder = await( Files.create( u.name, u.description getOrElse "", Some(usersid), true, None, Some(defaultUserid) ) )
+				val priv = await( Files.create( "", "", Some(folder.id.get), false, None, None ) )
 				val id =
 					g match {
 						case Some( gu ) =>
 							Users.update( gu.id.get, u.name, u.email, u.password, USER )
 							gu.id.get.toString
-						case None => await( Users.create(Some(u.name), Some(u.email), Some(u.password), None, USER) ).id.get.toString
+						case None => await( Users.create(Some(u.name), Some(u.email), Some(u.password), priv.id, USER) ).id.get.toString
 					}
 
 				(setSession( "id" -> id ) & complete( HttpResponse( status = StatusCodes.Created, s"""{"id": $id}""") ))
@@ -95,7 +95,7 @@ object API extends SessionDirectives {
 	def filesPostCreate( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
-				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("""{"direction": "duplex"}"""), Some(fileid)) map {
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, Some("""{"direction": "duplex"}"""), Some(defaultFileid)) map {
 					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>
@@ -120,7 +120,7 @@ object API extends SessionDirectives {
 				
 				Files.find( parentid, filename ) flatMap {
 					case None =>
-						Files.create( filename, src.drop(1).head.trim, Some(parentid), true, Some(src.drop(2).head.trim), Some(fileid) ) flatMap {
+						Files.create( filename, src.drop(1).head.trim, Some(parentid), true, Some(src.drop(2).head.trim), Some(defaultFileid) ) flatMap {
 							f =>
 								Future.sequence( cards map {case Array(front, back) => Pairs.create(f.id.get, front.trim, back.trim)} ) map { _ =>
 									ok( f.toJson.compactPrint )
@@ -155,19 +155,13 @@ object API extends SessionDirectives {
 	def foldersPostCreate( parentid: Int, info: models.FileInfo ) = {
 		Files.find( parentid, info.name ) flatMap {
 			case None =>
-				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, Some(folderid)) map {
+				Files.create(info.name, info.description.getOrElse(""), Some(parentid), true, None, Some(defaultFolderid)) map {
 					f => ok( f.toJson.compactPrint )
 				}
 			case Some(_) =>
 				Future {conflict(s"'${info.name}' already exists")}
 		}
 	}
-	
-// 	def filepath( fileid: Int ) = {
-// 		val buf = new StringBuilder
-// 		
-// 		
-// 	}
 	
 	def favoritesPost( f: models.FavoriteInfo ) =
 		Favorites.create( f.userid, f.fileid ) map {
@@ -177,4 +171,13 @@ object API extends SessionDirectives {
 	def favoritesGet( userid: Int ) = {
 		Queries.favorites( userid )
 	}
+	
+// 	def privatePost( f: models.FileInfo ) =
+// 		Favorites.create( f.userid, f.fileid ) map {
+// 			f => Map( "id" -> f )
+// 		}
+// 		
+// 	def privateGet( userid: Int ) = {
+// 		( userid )
+// 	}
 }

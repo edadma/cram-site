@@ -37,8 +37,9 @@ package object cramsite {
 	lazy val rootid = dao.Files.findRoot.head.id.get
 	lazy val usersid = await( dao.Files.find(rootid, "Users") ).head.id.get
 
-	var folderid: Int = _
-	var fileid: Int = _
+	var defaultFolderid: Int = _
+	var defaultFileid: Int = _
+	var defaultUserid: Int = _
 
 	def ok( message: String = "" ) = HttpResponse( status = StatusCodes.OK, message )
 	

@@ -49,23 +49,28 @@ object Startup {
 			Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN ) flatMap {
 				u =>
 					Future.sequence( Seq(
-						addImage( u.id.get, "Places-folder-icon.png" ),
+						addImage( u.id.get, "Books-icon.png" ),
 						addImage( u.id.get, "Apps-system-users-icon.png" ),
+						addImage( u.id.get, "Places-folder-icon.png" ),
 						addImage( u.id.get, "Apps-accessories-text-editor-icon.png" ),
-						addImage( u.id.get, "Places-folder-favorites-icon.png" )
+						addImage( u.id.get, "Places-folder-favorites-icon.png" ),
+						addImage( u.id.get, "Places-folder-locked-icon.png" ),
+						addImage( u.id.get, "Places-folder-image-icon.png" ),
+						addImage( u.id.get, "App-personal-icon.png" )
 					))
 			} map {
-				case Seq(folder, users, file, favorites) =>
-					folderid = folder
-					fileid = file
+				case Seq(topics, users, folder, file, favorites, locked, image, user) =>
+					defaultFolderid = folder
+					defaultFileid = file
+					defaultUserid = user
 					Files.create( "", "", None, false, None, None ) map {
 						root =>
-							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(folder) )
+							Files.create( "Topics", "Browse learning topics", root.id, true, None, Some(topics) )
 			// 				Files.create( "Topics", "Browse learning topics", root.id, true, None, None ) map {
 			// 					topics =>
 			// 						Files.create( "Topic 1", "A topic", topics.id, true, None, None )
 			// 				}
-							Files.create( "Favorites", "Browse your favorites", root.id, true, None, Some(favorites) )
+							Files.create( "Favorites", "My favorite lessons", root.id, true, None, Some(favorites) )
 							Files.create( "Users", "Browse user folders", root.id, true, None, Some(users) )
 			// 				Files.create( "Users", "Browse user folders", root.id, true, None, None ) map {
 			// 					users =>
@@ -78,6 +83,8 @@ object Startup {
 			// 								}
 			// 						}
 			// 				}
+							Files.create( "Private", "My private lessons", root.id, true, None, Some(locked) )
+							Files.create( "Images", "My images", root.id, true, None, Some(image) )
 					}
 			}
 	}

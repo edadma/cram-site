@@ -18,7 +18,7 @@ case class User(
 	name: Option[String],
 	email: Option[String],
 	password: Option[String],
-	avatar: Option[Int],
+	pid: Option[Int],
 	registered: Instant,
 	status: Byte,
 	id: Option[Int] = None
@@ -33,11 +33,11 @@ class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 	def name = column[Option[String]]("name")
 	def email = column[Option[String]]("email")
 	def password = column[Option[String]]("password")
-	def avatar = column[Option[Int]]("avatar")
+	def pid = column[Option[Int]]("pid")
 	def registered = column[Instant]("registered")
 	def status = column[Byte]("status")
 	
-	def * = (name, email, password, avatar, registered, status, id.?) <> (User.apply _ tupled, User.unapply)
+	def * = (name, email, password, pid, registered, status, id.?) <> (User.apply _ tupled, User.unapply)
 	def idx_users_name = index("idx_users_name", name, unique = true)
  	def idx_users_email = index("idx_users_email", email, unique = true)
  	def idx_users_password = index("idx_users_password", password)
@@ -52,8 +52,8 @@ object Users extends TableQuery(new UsersTable(_)) {
 
 	def find( email: String, password: String ) = db.run( filter(r => r.email === email && r.password === password).result ) map (_.headOption)
 	
-	def create( name: Option[String], email: Option[String], password: Option[String], avatar: Option[Int], status: Int ) =
-		db.run( (this returning map(_.id) into ((user, id) => user.copy(id = Some(id)))) += User(name, email, password, avatar, Instant.now, status.asInstanceOf[Byte]) )
+	def create( name: Option[String], email: Option[String], password: Option[String], pid: Option[Int], status: Int ) =
+		db.run( (this returning map(_.id) into ((user, id) => user.copy(id = Some(id)))) += User(name, email, password, pid, Instant.now, status.asInstanceOf[Byte]) )
 
 	def update( id: Int, name: String, email: String, password: String, status: Int ) =
 		db.run( filter(_.id === id) map (u => (u.name, u.email, u.password, u.status)) update (Some(name), Some(email), Some(password), status.toByte) )
@@ -244,30 +244,27 @@ object Medias extends TableQuery(new MediasTable(_)) {
 
 case class Favorite(
 	userid: Int,
-	fileid: Int,
-	id: Option[Int] = None
+	fileid: Int
 )
 
 class FavoritesTable(tag: Tag) extends Table[Favorite](tag, "favorites") {
-	def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 	def userid = column[Int]("userid")
 	def fileid = column[Int]("fileid")
 	
-	def * = (userid, fileid, id.?) <> (Favorite.tupled, Favorite.unapply)
+	def * = (userid, fileid) <> (Favorite.tupled, Favorite.unapply)
+	def pk = primaryKey("pk_favorites", (userid, fileid))
 	def user_fk = foreignKey("favorites_user_fk", userid, Users)(_.id, onDelete=ForeignKeyAction.Cascade)
 	def file_fk = foreignKey("favorites_file_fk", fileid, Files)(_.id, onDelete=ForeignKeyAction.Cascade)
 	def idx_favorites_user_file = index("idx_favorites_user_file", (userid, fileid), unique = true )
 }
 
 object Favorites extends TableQuery(new FavoritesTable(_)) {
-	def find(id: Int): Future[Option[Favorite]] = db.run( filter(_.id === id) result ) map (_.headOption)
-
 	def findByUserid(userid: Int) = filter (_.userid === userid)
 
-	def create( userid: Int, fileid: Int ) = db.run( this returning map(_.id) += Favorite(userid, fileid) )
+	def create( userid: Int, fileid: Int ) = db.run( this += Favorite(userid, fileid) )
 
-	def delete(id: Int): Future[Int] = {
-		db.run(filter(_.id === id).delete)
+	def delete( userid: Int, fileid: Int ): Future[Int] = {
+		db.run(filter(f => f.userid === userid && f.fileid === fileid).delete)
 	}
 	
 	def list: Future[Seq[Favorite]] = db.run(this.result)

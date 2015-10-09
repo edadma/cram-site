@@ -237,10 +237,10 @@ object Views {
 						<div class="row" ng-repeat="chunk in chunks">
 							<div class="col-md-2" ng-repeat="file in chunk">
 								<a class="clickable" ng-click="selectFile(file)">
-									<img class="img-rounded" ng-src="/image/{{file.imageid}}"/>
+									<img class="center-block img-rounded" ng-src="/image/{{file.imageid}}"/>
 									<div class="caption">
-										<h4 class="text-wrap">{"{{file.name}}"}</h4>
-										<p class="text-left text-wrap">{"{{file.description}}"}</p>
+										<h4 class="text-center text-wrap">{"{{file.name}}"}</h4>
+										<p class="text-center text-wrap">{"{{file.description}}"}</p>
 									</div>
 								</a>
 							</div>
