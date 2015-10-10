@@ -59,7 +59,12 @@ object API extends SessionDirectives {
 	
 	def filesUnderRoot = Files.findUnder( rootid )
 	
-	def filesUnder( parentid: Int ) = Files.findUnder( parentid )
+	def filesUnder( parentid: Int, user: User ) = {
+		if (parentid == privateid)
+			Files.findUnder( user.pid )
+		else
+			Files.findUnder( parentid )
+	}
 	
 	def filesPost( id: Int, info: models.FileInfo ) = {
 		Files.find( id ) flatMap {

@@ -48,21 +48,21 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		
 		def guest: Directive[dao.User :: HNil] = {
 			val priv = await( dao.Files.create( dao.Users.count toString, "", Some(privateid), false, None, None ) )
-			val u = await( dao.Users.create(None, None, None, None, GUEST) )
+			val pid = priv.id.get
+			val u = await( dao.Users.create(None, None, None, pid, GUEST) )
 			val uid = u.id.get.toString
-			
-			await( dao.Users.update(u.id.get, priv.id.get) )
 			
 			setSession( "id" -> uid ) & provide( u )
 		}
 		
-		def user: Directive[dao.User :: HNil] = optionalSession hflatMap {
+		def user: Directive[dao.User :: HNil] = optionalUser hflatMap {
 			case None :: HNil => guest
-			case Some( s ) :: HNil =>
-				await( dao.Users.find(s.data("id").toInt) ) match {
-					case Some( u ) => provide( u )
-					case None => guest
-				}
+			case Some( u ) :: HNil => provide( u )
+		}
+		
+		def requireUser: Directive[dao.User :: HNil] = optionalUser hflatMap {
+			case None :: HNil => reject
+			case Some( u ) :: HNil => provide( u )
 		}
 		
 // 		def admin: Directive[dao.Blog :: models.User :: HNil] = (blog & session) hflatMap {
@@ -133,8 +133,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		pathPrefix( "api"/"v1" ) {
 			(get & path("files")) {
 				complete( API.filesUnderRoot ) } ~
-			(get & path("files"/IntNumber)) { id =>
-				complete( API.filesUnder(id) ) } ~
+			(get & path("files"/IntNumber) & requireUser) { (parentid, u) =>
+				complete( API.filesUnder(parentid, u) ) } ~
 			(post & path("files") & parameters("parentid".as[Int], "content".as[Boolean]) & entity(as[FileContent]) & session) { (parentid, _, content, _) =>
 				complete( API.filesPostCreate(parentid, content) ) } ~
 			(post & path("files") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>

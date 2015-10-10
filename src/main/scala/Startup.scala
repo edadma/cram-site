@@ -46,7 +46,7 @@ object Startup {
 	
 		val conf = ConfigFactory.load
 		val u = conf.get[Map[String, String]]("init.suadmin")
-			Users.create( Some(u("name")), Some(u("email")), Some(u("password")), None, SUADMIN ) flatMap {
+			Users.create( Some(u("name")), Some(u("email")), Some(u("password")), -1, SUADMIN ) flatMap {
 				u =>
 					Future.sequence( Seq(
 						addImage( u.id.get, "Books-icon.png" ),

@@ -18,7 +18,7 @@ case class User(
 	name: Option[String],
 	email: Option[String],
 	password: Option[String],
-	pid: Option[Int],
+	pid: Int,
 	registered: Instant,
 	status: Byte,
 	id: Option[Int] = None
@@ -33,7 +33,7 @@ class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 	def name = column[Option[String]]("name")
 	def email = column[Option[String]]("email")
 	def password = column[Option[String]]("password")
-	def pid = column[Option[Int]]("pid")
+	def pid = column[Int]("pid")
 	def registered = column[Instant]("registered")
 	def status = column[Byte]("status")
 	
@@ -52,14 +52,14 @@ object Users extends TableQuery(new UsersTable(_)) {
 
 	def find( email: String, password: String ) = db.run( filter(r => r.email === email && r.password === password).result ) map (_.headOption)
 	
-	def create( name: Option[String], email: Option[String], password: Option[String], pid: Option[Int], status: Int ) =
+	def create( name: Option[String], email: Option[String], password: Option[String], pid: Int, status: Int ) =
 		db.run( (this returning map(_.id) into ((user, id) => user.copy(id = Some(id)))) += User(name, email, password, pid, Instant.now, status.asInstanceOf[Byte]) )
 
 	def update( id: Int, name: String, email: String, password: String, status: Int ) =
 		db.run( filter(_.id === id) map (u => (u.name, u.email, u.password, u.status)) update (Some(name), Some(email), Some(password), status.toByte) )
 
-	def update( id: Int, pid: Int ) =
-		db.run( filter(_.id === id) map (u => (u.pid)) update Some(pid) )
+// 	def update( id: Int, pid: Int ) =
+// 		db.run( filter(_.id === id) map (u => (u.pid)) update Some(pid) )
 	
 	def delete(id: Int): Future[Int] = {
 		db.run(filter(_.id === id).delete)
