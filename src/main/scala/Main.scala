@@ -133,8 +133,8 @@ object Main extends App with SimpleRoutingApp with SessionDirectives {
 		pathPrefix( "api"/"v1" ) {
 			(get & path("files")) {
 				complete( API.filesUnderRoot ) } ~
-			(get & path("files"/IntNumber) & requireUser) { (parentid, u) =>
-				complete( API.filesUnder(parentid, u) ) } ~
+			(get & path("files"/IntNumber) & session) { (parentid, _) =>
+				complete( API.filesUnder(parentid) ) } ~
 			(post & path("files") & parameters("parentid".as[Int], "content".as[Boolean]) & entity(as[FileContent]) & session) { (parentid, _, content, _) =>
 				complete( API.filesPostCreate(parentid, content) ) } ~
 			(post & path("files") & parameter("parentid".as[Int]) & entity(as[FileInfo]) & session) { (parentid, info, _) =>

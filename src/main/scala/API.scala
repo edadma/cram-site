@@ -59,10 +59,10 @@ object API extends SessionDirectives {
 	
 	def filesUnderRoot = Files.findUnder( rootid )
 	
-	def filesUnder( parentid: Int, user: User ) = {
-		if (parentid == privateid)
-			Files.findUnder( user.pid )
-		else
+	def filesUnder( parentid: Int ) = {
+// 		if (parentid == privateid)
+// 			Files.findUnder( user.pid )
+// 		else
 			Files.findUnder( parentid )
 	}
 	

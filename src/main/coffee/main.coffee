@@ -32,6 +32,8 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.file = undefined
 		$scope.message = {type: 'none'}
 		Files.query (result, response) ->
+			for e in result
+				if e.name == 'Private' then e.id = $scope.user.pid
 			contents(result)
 		,	(response) ->
 			$scope.message = {type: 'error', text: response.data}
@@ -71,15 +73,17 @@ app.controller 'MainController', ['$scope', '$resource', 'FileUploader', ($scope
 		$scope.path.splice( index + 1, $scope.path.length - index - 1 )
 		directory($scope.path[index])
 		
-	$scope.canModifyContents = -> $scope.path.length > 0 and ($scope.path[0].name == 'Topics' or ($scope.path[0].name == 'Users' and $scope.path.length > 1 and $scope.path[1].name == $scope.user.name))
+	$scope.canModifyContents = -> $scope.path.length > 0 and ($scope.path[0].name == 'Topics' or ($scope.path[0].name == 'Users' and $scope.path.length > 1 and $scope.path[1].name == $scope.user.name) or $scope.path[0].name == 'Private')
 	
 	$scope.canCreateLesson = ->
-		$scope.canModifyContents() and (($scope.path.length > 1 and $scope.path[0].name == 'Topics') or ($scope.path.length > 1 and $scope.path[0].name == 'Users')) and not $scope.file
+		$scope.canModifyContents() and (($scope.path.length > 1 and $scope.path[0].name == 'Topics') or ($scope.path.length > 1 and $scope.path[0].name == 'Users') or $scope.path[0].name == 'Private') and not $scope.file
 		
 	$scope.canCreateFolder = -> $scope.canModifyContents() and not $scope.file
 	
 	$scope.canModifyFolder = ->
 		$scope.canModifyContents() and (($scope.path.length > 1 and $scope.path[0].name == 'Topics') or ($scope.path.length > 2 and $scope.path[0].name == 'Users')) and not $scope.file
+	
+	$scope.notPrivate = -> $scope.path.length == 0 or $scope.path[0].name != 'Private'
 	
 	$scope.createFolderForm = ->
 		$scope.fileName = ''

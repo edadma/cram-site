@@ -14,7 +14,7 @@ import models._
 
 
 object Views {
-	val ANGULARJS = "1.4.6"
+	val ANGULARJS = "1.4.7"
 	
   val conf = ConfigFactory.load
 
@@ -84,7 +84,7 @@ object Views {
 						<button ng-show={"file && !start && canModifyContents()"} ng-click="editLessonForm()" class="btn btn-default navbar-btn">Edit Lesson</button>
 						<button ng-show={"file && start"} ng-click="selectFile(file)" class="btn btn-danger navbar-btn">Stop Cramming</button>
 						<button ng-show={"file && start"} ng-click="startCramming()" class="btn btn-success navbar-btn">Restart Cram Session</button>
-						<button ng-show="file" ng-click="favoriteLesson()" class="btn btn-default navbar-btn"><img src="/Places-favorites-icon.png"/> Add to Favorites</button>
+						<button ng-show={"file && notPrivate()"} ng-click="favoriteLesson()" class="btn btn-default navbar-btn"><img src="/Places-favorites-icon.png"/> Add to Favorites</button>
 						<button ng-show="canCreateLesson()" ng-click="createLessonForm()" class="btn btn-primary navbar-btn">Create Lesson</button>
 						<button ng-show="canCreateLesson()" ng-click="inputLessonForm()" class="btn btn-primary navbar-btn">Input Lesson</button>
 						<button ng-show="canCreateFolder()" ng-click="createFolderForm()" class="btn btn-default navbar-btn">Create Topic</button>
