@@ -258,6 +258,16 @@ object Views {
 			</div>
 		}
 
+// 				<footer class="footer">
+// 					<div class="container">
+// 						<div class="row">
+// 							<div class="col-md-12">
+// 								<image class="center-block" src=""/>
+// 							</div>
+// 						</div>
+// 					</div>
+// 				</footer>
+
 	def login = {
 		main( "Login" ) {
 			<link href="/css/signin.css" rel="stylesheet"/>
