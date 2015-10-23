@@ -28,8 +28,6 @@ libraryDependencies ++= {
 
 libraryDependencies += "xyz.hyperreal" %% "spray-cookiebaker" % "0.1"
 
-libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.7.0"
-
 libraryDependencies += "com.github.kxbmap" %% "configs" % "0.2.5"
 
 libraryDependencies ++= Seq(
@@ -44,14 +42,17 @@ libraryDependencies ++= Seq(
 	"org.webjars" % "nervgh-angular-file-upload" % "2.1.1"
 	)
 
-libraryDependencies ++= Seq(
-	"com.typesafe.slick" %% "slick" % "3.0.3",
-	"com.typesafe.slick" %% "slick-codegen" % "3.0.3",
+libraryDependencies ++= {
+	val slickV = "3.1.0"
+	Seq(
+	"com.typesafe.slick" %% "slick" % slickV,
+	"com.typesafe.slick" %% "slick-codegen" % slickV,
 	"com.h2database" % "h2" % "1.4.188",
 	"joda-time" % "joda-time" % "2.7",
 	"org.joda" % "joda-convert" % "1.7",
 	"com.github.tototoshi" %% "slick-joda-mapper" % "2.0.0"
 	)
+}
 
 mainClass in (Compile, run) := Some( "xyz.hyperreal.cramsite.Main" )
 
